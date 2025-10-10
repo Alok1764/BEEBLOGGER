@@ -8,6 +8,7 @@ import com.example.BLOGAPI.Services.ServicesInterfaces.AuthorService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorRepository authorRepository;
-
+    private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
 
     @Override
@@ -46,7 +47,8 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public void updateAuthorPassword(Long id, String password) {
-        authorRepository.updatePassword(id,password);
+        String encodedPassword=passwordEncoder.encode(password);
+        authorRepository.updatePassword(id,encodedPassword);
     }
     @Override
     public AuthorDTO updateAuthorEmail(Long id, String email) {
@@ -59,5 +61,9 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public void deleteAuthor(Long id) {
         authorRepository.deleteById(id);
+    }
+
+    public boolean authorExitsByEmail(String email) {
+         return authorRepository.existsByEmail(email);
     }
 }

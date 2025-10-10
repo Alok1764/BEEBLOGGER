@@ -5,7 +5,7 @@ import StatsCard from "./StatsCard";
 
 const Dashboard = ({ userInfo, onLogout }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-100">
+    <div className="min-h-screen w-screen bg-gradient-to-br from-green-50 to-blue-100">
       <Navbar onLogout={onLogout} />
 
       <div className="max-w-7xl mx-auto px-4 py-8">

@@ -29,4 +29,9 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
     void updateAuthorEmail(@Param("id") Long id,@Param("email") String email);
 
     Optional<Author> findByUserName(String username);
+
+    boolean existsByEmail(String email);
+
+    @Query("SELECT a.id FROM Author a WHERE a.email=:email")
+    Long findByEmail(@Param("email") String email);
 }

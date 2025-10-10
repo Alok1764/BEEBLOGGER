@@ -39,6 +39,57 @@ export const registerUser = async (userData) => {
   return await response.text();
 };
 
+export const sendOTP = async (email) => {
+  const response = await fetch(`${API_BASE_URL}/forgot-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(error || "Failed to send OTP");
+  }
+
+  return await response.text();
+};
+
+export const verifyOTP = async (email, otp) => {
+  const response = await fetch(`${API_BASE_URL}/verify-otp`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, otp }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(error || "Invalid OTP");
+  }
+
+  return await response.text();
+};
+
+export const resetPassword = async (email, otp, newPassword) => {
+  const response = await fetch(`${API_BASE_URL}/reset-password`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, otp, newPassword }),
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(error || "Failed to reset password");
+  }
+
+  return await response.text();
+};
+
 export const authenticatedRequest = async (
   endpoint,
   method = "GET",

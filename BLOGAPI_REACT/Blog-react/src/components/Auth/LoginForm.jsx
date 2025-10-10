@@ -3,12 +3,16 @@ import { User, Lock, Eye, EyeOff } from "lucide-react";
 import Input from "../Shared/Input";
 import { loginUser } from "../../Services/api";
 import { saveToken, getUserFromToken } from "../../Utils/auth";
+import { useToast } from "../../Contexts/ToastContext";
 
 const LoginForm = ({ onLoginSuccess, setMessage }) => {
+  const toast = useToast();
+
   const [formData, setFormData] = useState({
     userName: "",
     password: "",
   });
+
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -31,10 +35,7 @@ const LoginForm = ({ onLoginSuccess, setMessage }) => {
 
       const userInfo = getUserFromToken();
 
-      setMessage({
-        text: "✅ Login Successful!",
-        type: "success",
-      });
+      toast.success("Login successful! Welcome back!");
 
       setFormData({ userName: "", password: "" });
 

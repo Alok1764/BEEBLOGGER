@@ -2,28 +2,43 @@ import React, { useState } from "react";
 import { LogIn, UserPlus } from "lucide-react";
 import LoginForm from "./LoginForm";
 import RegisterForm from "./RegisterForm";
+import ForgotPassword from "./ForgotPassword";
 
 const AuthLayout = ({ onLoginSuccess }) => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [currentView, setCurrentView] = useState("login");
   const [message, setMessage] = useState({ text: "", type: "" });
 
   const handleRegisterSuccess = () => {
-    setIsLogin(true);
+    setCurrentView("login");
     setMessage({ text: "", type: "" });
   };
 
+  const handleForgotPassword = () => {
+    setCurrentView("forgot");
+    setMessage({ text: "", type: "" });
+  };
+
+  const handleBackToLogin = () => {
+    setCurrentView("login");
+    setMessage({ text: "", type: "" });
+  };
+
+  if (currentView === "forgot") {
+    return <ForgotPassword onBack={handleBackToLogin} />;
+  }
+
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 
+      className="min-h-screen w-screen bg-gradient-to-br from-blue-50 to-indigo-100 
                     flex items-center justify-center p-4"
     >
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            {isLogin ? "Welcome Back!" : "Create Account"}
+            {currentView === "login" ? "Welcome Back!" : "Create Account"}
           </h1>
           <p className="text-gray-600">
-            {isLogin
+            {currentView === "login"
               ? "Login to your blog account"
               : "Register to start blogging"}
           </p>
@@ -44,12 +59,12 @@ const AuthLayout = ({ onLoginSuccess }) => {
         <div className="flex gap-2 mb-6 bg-gray-100 p-1 rounded-lg">
           <button
             onClick={() => {
-              setIsLogin(true);
+              setCurrentView("login");
               setMessage({ text: "", type: "" });
             }}
             className={`flex-1 py-2 rounded-md font-medium transition-all 
                        flex items-center justify-center gap-2 ${
-                         isLogin
+                         currentView === "login"
                            ? "bg-white text-indigo-600 shadow"
                            : "text-gray-600 hover:text-gray-800"
                        }`}
@@ -59,12 +74,12 @@ const AuthLayout = ({ onLoginSuccess }) => {
           </button>
           <button
             onClick={() => {
-              setIsLogin(false);
+              setCurrentView("register");
               setMessage({ text: "", type: "" });
             }}
             className={`flex-1 py-2 rounded-md font-medium transition-all 
                        flex items-center justify-center gap-2 ${
-                         !isLogin
+                         currentView === "register"
                            ? "bg-white text-indigo-600 shadow"
                            : "text-gray-600 hover:text-gray-800"
                        }`}
@@ -74,8 +89,20 @@ const AuthLayout = ({ onLoginSuccess }) => {
           </button>
         </div>
 
-        {isLogin ? (
-          <LoginForm onLoginSuccess={onLoginSuccess} setMessage={setMessage} />
+        {currentView === "login" ? (
+          <>
+            <LoginForm
+              onLoginSuccess={onLoginSuccess}
+              setMessage={setMessage}
+            />
+            <button
+              onClick={handleForgotPassword}
+              className="mt-4 w-full text-center text-sm text-indigo-600 
+                       hover:text-indigo-800 hover:underline transition"
+            >
+              Forgot Password?
+            </button>
+          </>
         ) : (
           <RegisterForm
             onRegisterSuccess={handleRegisterSuccess}
