@@ -1,5 +1,6 @@
 package com.example.BLOGAPI.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,6 +33,7 @@ public class Category {
 
     @ToString.Exclude
     @ManyToMany(mappedBy = "categories")
+    @JsonBackReference
     private List<Post> posts = new ArrayList<>();
 
     @Builder

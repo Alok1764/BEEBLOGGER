@@ -8,6 +8,7 @@ import com.example.BLOGAPI.Services.ServicesInterfaces.AuthorService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -65,5 +66,12 @@ public class AuthorServiceImpl implements AuthorService {
 
     public boolean authorExitsByEmail(String email) {
          return authorRepository.existsByEmail(email);
+    }
+    public AuthorDTO getLoggedInUser(Authentication authentication) {
+        String username = authentication.getName();
+        Author author = authorRepository.findByUserName(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found: "+username));
+        return modelMapper.map(author,AuthorDTO.class);
+
     }
 }

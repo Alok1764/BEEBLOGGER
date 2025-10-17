@@ -13,7 +13,9 @@ import com.example.BLOGAPI.Repositories.PostRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -31,13 +33,29 @@ public class PostServiceImpl {
     private final AuthorRepository authorRepository;
     private final CategoryRepository categoryRepository;
 
-    public List<PostDTO> getAllPosts(Pageable pageable) {
-        return postRepository.findAll(pageable).getContent()
-                .stream()
-                .map(post->modelMapper.map(post,PostDTO.class))
-                .collect(Collectors.toList());
+//    public List<PostDTO> getAllPosts(Pageable pageable) {
+//        return postRepository.findAll(pageable).getContent()
+//                .stream()
+//                .map(post->modelMapper.map(post,PostDTO.class))
+//                .collect(Collectors.toList());
+//
+//    }
 
+  public Page<PostDTO> getAllPosts(Pageable pageable) {
+    Page<Post> postsPage = postRepository.findAll(pageable);
+
+    return postsPage.map(post -> modelMapper.map(post, PostDTO.class));
+  }
+
+    public Page<PostDTO> getPostsByAuthor(Authentication authentication, Pageable pageable) {
+        String username = authentication.getName();
+        Author author = authorRepository.findByUserName(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found"));
+
+        Page<Post> postsPage = postRepository.findByAuthorId(author.getId(),pageable);
+        return postsPage.map(post-> modelMapper.map(post,PostDTO.class));
     }
+
     @Transactional
     public PostDTO getPostById(Long id) {
         Post post= postRepository.findById(id)
@@ -66,19 +84,19 @@ public class PostServiceImpl {
     }
 
 
-    public List<PostDTO> getPostsByAuthor(Long id, Pageable pageable) {
-        return postRepository.findByAuthorId(id,pageable).getContent()
-                .stream()
-                .map(posts ->modelMapper.map(posts,PostDTO.class))
-                .collect(Collectors.toList());
-    }
+//    public List<PostDTO> getPostsByCategory(List<Long> categoryIds,Pageable pageable){
+//        return postRepository.findByCategoryIds(categoryIds,pageable).getContent()
+//                .stream()
+//                .map(posts ->modelMapper.map(posts,PostDTO.class))
+//                .collect(Collectors.toList());
+//    }
 
-    public List<PostDTO> getPostsByCategory(Long categoryId,Pageable pageable){
-        return postRepository.findByCategoryId(categoryId,pageable).getContent()
-                .stream()
-                .map(posts ->modelMapper.map(posts,PostDTO.class))
-                .collect(Collectors.toList());
-    }
+public Page<PostDTO> getPostsByCategory(List<Long> categoryIds, Pageable pageable) {
+    Page<Post> postsPage = postRepository.findByCategoryIds(categoryIds, pageable);
+
+    return postsPage.map(post -> modelMapper.map(post, PostDTO.class));
+}
+
 
 
     public List<PostDTO> getRecentPosts(Pageable pageable){
@@ -108,6 +126,7 @@ public class PostServiceImpl {
                 .categories(categories)
                 .build();
          Post savedPost =postRepository.save(post);
+
         return modelMapper.map(savedPost,PostDTO.class);
     }
 
@@ -153,5 +172,12 @@ public class PostServiceImpl {
 
     public void deletePost(Long id) {
         postRepository.deleteById(id);
+    }
+
+    public void uploadPostImg(Long id, String url) {
+        Post post=postRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("No such Post find by id: "+id));
+        post.setImage(url);
+        postRepository.save(post);
     }
 }

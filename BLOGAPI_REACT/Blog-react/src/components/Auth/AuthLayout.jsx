@@ -29,10 +29,10 @@ const AuthLayout = ({ onLoginSuccess }) => {
 
   return (
     <div
-      className="min-h-screen w-screen bg-gradient-to-br from-blue-50 to-indigo-100 
+      className="min-h-screen bg-gradient-to-br from-indigo-300 to-orange-300
                     flex items-center justify-center p-4"
     >
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+      <div className="bg-gradient-to-br from-orange-300 to-indigo-300 rounded-2xl shadow-2xl w-full max-w-md p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">
             {currentView === "login" ? "Welcome Back!" : "Create Account"}
@@ -109,17 +109,6 @@ const AuthLayout = ({ onLoginSuccess }) => {
             setMessage={setMessage}
           />
         )}
-
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <p className="text-xs text-gray-600 font-mono">
-            <span className="font-semibold">Backend:</span>{" "}
-            http://localhost:8080
-            <br />
-            <span className="font-semibold">Token:</span> Stored in localStorage
-            <br />
-            <span className="font-semibold">Console:</span> Press F12 for logs
-          </p>
-        </div>
       </div>
     </div>
   );

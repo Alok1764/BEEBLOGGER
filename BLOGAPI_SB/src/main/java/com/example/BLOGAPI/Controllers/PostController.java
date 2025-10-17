@@ -2,17 +2,22 @@ package com.example.BLOGAPI.Controllers;
 
 import com.example.BLOGAPI.DTOs.request.PostCreatedDTO;
 import com.example.BLOGAPI.DTOs.response.PostDTO;
+import com.example.BLOGAPI.Entities.Author;
 import com.example.BLOGAPI.Enums.PostStatus;
+import com.example.BLOGAPI.Exceptions.ResourceNotFoundException;
+import com.example.BLOGAPI.Repositories.AuthorRepository;
 import com.example.BLOGAPI.Services.ServicesImpl.PostServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,19 +30,31 @@ public class PostController {
     Logger logger= LoggerFactory.getLogger(PostController.class);
 
     private  final PostServiceImpl postService;
+    private final AuthorRepository authorRepository;
+
+    //updated this and imporve the query time avoiding N+1 problem
+    //map both all post and categories together
 
     @GetMapping
- ResponseEntity<List<PostDTO>> getAllPosts(@RequestParam(required = false,defaultValue = "0") int pageNo,
-                                           @RequestParam(required = false,defaultValue = "10") int pageSize,
-                                           @RequestParam(required = false,defaultValue = "id") String sortedBy,
-                                           @RequestParam(required = false,defaultValue = "ASC") String sortOrder){
+    public ResponseEntity<Page<PostDTO>> getPosts(
+            @RequestParam(required = false) List<Long> categoryIds,
+            @RequestParam(defaultValue = "0") int pageNo,
+            @RequestParam(defaultValue = "12") int pageSize,
+            @RequestParam(required = false, defaultValue = "id") String sortedBy,
+            @RequestParam(required = false, defaultValue = "ASC") String sortOrder) {
 
-     logger.info("GET /api/posts");
-     Sort sort=null;
-     if(sortOrder.equalsIgnoreCase("ASC")) sort= Sort.by(sortedBy).ascending();
-     else sort=Sort.by(sortedBy).descending();
-     return ResponseEntity.ok(postService.getAllPosts(PageRequest.of(pageNo,pageSize,sort)));
- }
+        logger.info("GET /api/posts - categoryIds: {}, page: {}, size: {}, sortBy: {}, sortOrder: {}",
+                categoryIds, pageNo, pageSize, sortedBy, sortOrder);
+
+        Sort sort = sortOrder.equalsIgnoreCase("ASC") ? Sort.by(sortedBy).ascending() : Sort.by(sortedBy).descending();
+
+        if (categoryIds != null && !categoryIds.isEmpty()) {
+            return ResponseEntity.ok(postService.getPostsByCategory(categoryIds, PageRequest.of(pageNo, pageSize, sort)));
+        }
+
+        return ResponseEntity.ok(postService.getAllPosts(PageRequest.of(pageNo, pageSize, sort)));
+    }
+
 
     @GetMapping("/{id}")
     ResponseEntity<PostDTO> getPostById(@PathVariable Long id){
@@ -56,39 +73,27 @@ public class PostController {
     public ResponseEntity<List<PostDTO>> searchPosts(
             @RequestParam String keyword,
             @RequestParam(defaultValue = "0") int pageNo,
-            @RequestParam(defaultValue = "10") int pageSize) {
+            @RequestParam(defaultValue = "12") int pageSize) {
 
         logger.info("GET /api/posts/search - keyword: {}, page: {}, size: {}", keyword, pageNo, pageSize);
 
         return ResponseEntity.ok(postService.searchPosts(keyword,PageRequest.of(pageNo,pageSize)));
     }
 
-    @GetMapping("/author/{authorId}")
-    public ResponseEntity<List<PostDTO>> getPostsByAuthor(
-            @PathVariable Long authorId,
+    @GetMapping("/my-posts")
+    public ResponseEntity<Page<PostDTO>> getPostsByAuthor(
+            Authentication authentication,
             @RequestParam(defaultValue = "0") int pageNo,
-            @RequestParam(defaultValue = "10") int pageSize) {
+            @RequestParam(defaultValue = "12") int pageSize) {
 
-        logger.info("GET /api/posts/author/{} - page: {}, size: {}", authorId, pageNo, pageSize);
-        return ResponseEntity.ok(postService.getPostsByAuthor(authorId,PageRequest.of(pageNo,pageSize)));
+        logger.info("GET /api/posts/my-posts/ - page: {}, size: {}", pageNo, pageSize);
+        return ResponseEntity.ok(postService.getPostsByAuthor(authentication,PageRequest.of(pageNo,pageSize)));
     }
-
-    @GetMapping("/category/{categoryId}")
-    public ResponseEntity<List<PostDTO>> getPostsByCategory(
-            @PathVariable Long categoryId,
-            @RequestParam(defaultValue = "0") int pageNo,
-            @RequestParam(defaultValue = "10") int pageSize) {
-
-        logger.info("GET /api/posts/category/{} - page: {}, size: {}", categoryId, pageNo,pageSize);
-
-        return ResponseEntity.ok(postService.getPostsByCategory(categoryId,PageRequest.of(pageNo,pageSize)));
-    }
-
 
     @GetMapping("/recent")
     public ResponseEntity<List<PostDTO>> getRecentPosts(
             @RequestParam(defaultValue = "0") int pageNo,
-            @RequestParam(defaultValue = "10") int pageSize
+            @RequestParam(defaultValue = "12") int pageSize
     ) {
         logger.info("GET /api/posts/recent");
 
@@ -98,19 +103,27 @@ public class PostController {
     @GetMapping("/popular")
     public ResponseEntity<List<PostDTO>> getPopularPosts(
             @RequestParam(defaultValue = "0") int pageNo,
-            @RequestParam(defaultValue = "10") int pageSize
+            @RequestParam(defaultValue = "12") int pageSize
     ) {
         logger.info("GET /api/posts/popular");
 
         return ResponseEntity.ok(postService.getPopularPosts(PageRequest.of(pageNo,pageSize)));
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<PostDTO> createPost(@Valid @RequestBody PostCreatedDTO postCreatedDTO) {
         logger.info("POST /api/posts - title: {}", postCreatedDTO.getTitle());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(postService.createPost(postCreatedDTO));
     }
+
+    //just for testing
+    @PostMapping("/{id}/upload-post-img")
+    public ResponseEntity<Void> uploadPostImg(@PathVariable Long id, @RequestParam String url){
+        postService.uploadPostImg(id,url);
+        return ResponseEntity.noContent().build();
+    }
+
 
     @PutMapping("/{id}")
     @PreAuthorize("@postSecurityService.isPostOwner(#id)")
@@ -150,5 +163,6 @@ public class PostController {
         postService.deletePost(id);
         return ResponseEntity.noContent().build();
     }
+
 
 }

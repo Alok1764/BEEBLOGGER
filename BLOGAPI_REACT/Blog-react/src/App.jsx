@@ -5,10 +5,20 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import AuthLayout from "./components/Auth/AuthLayout";
 import { getUserFromToken, removeToken, isAuthenticated } from "./Utils/auth";
 import { ToastProvider } from "./Contexts/ToastContext";
+import Navbar2 from "./components/Dashboard/Navbar2";
+import Home from "./Pages/Home";
+import Services from "./Pages/Services";
+import About from "./Pages/About";
+import Blogs2 from "./Pages/Blogs2";
+import Contact from "./Pages/Contact";
+import Profile from "./Pages/Profile";
+import AuthModal from "./components/AuthModal";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState("login");
 
   useEffect(() => {
     if (isAuthenticated()) {
@@ -24,6 +34,7 @@ const App = () => {
   const handleLoginSuccess = (user) => {
     setUserInfo(user);
     setIsLoggedIn(true);
+    setShowAuthModal(false);
   };
 
   const handleLogout = () => {
@@ -33,49 +44,55 @@ const App = () => {
     console.log("User logged out");
   };
 
+  const openAuthModal = (mode = "login") => {
+    setAuthMode(mode);
+    setShowAuthModal(true);
+  };
+
+  const closeAuthModal = () => {
+    setShowAuthModal(false);
+  };
+
   return (
     <ToastProvider>
-      <div className="min-h-screen bg-amber-400">
+      <div className="min-h-screen">
+        {/* Navbar on all pages */}
+        <Navbar2
+          onLogout={handleLogout}
+          isLoggedIn={isLoggedIn}
+          onLoginClick={() => openAuthModal("login")}
+        />
+
         <Routes>
+          <Route path="/" element={<Navigate to="/home" />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/about" element={<About />} />
+
+          {/* Blogs - accessible to all, but some features require login */}
           <Route
-            path="/"
+            path="/blogs"
             element={
-              isLoggedIn ? (
-                <Navigate to="/dashboard" />
-              ) : (
-                <Navigate to="/login" />
-              )
+              <Blogs2 openAuthModal={openAuthModal} isLoggedIn={isLoggedIn} />
             }
           />
 
+          <Route path="/contact" element={<Contact />} />
+
+          {/* Protected Route - Profile */}
           <Route
-            path="/login"
-            element={
-              isLoggedIn ? (
-                <Navigate to="/dashboard" />
-              ) : (
-                <AuthLayout onLoginSuccess={handleLoginSuccess} />
-              )
-            }
-          />
-          <Route
-            path="/register"
-            element={
-              isLoggedIn ? (
-                <Navigate to="/dashboard" />
-              ) : (
-                <AuthLayout onLoginSuccess={handleLoginSuccess} />
-              )
-            }
+            path="/profile"
+            element={isLoggedIn ? <Profile /> : <Navigate to="/home" replace />}
           />
 
+          {/* Protected Route - Dashboard */}
           <Route
             path="/dashboard"
             element={
               isLoggedIn ? (
                 <Dashboard userInfo={userInfo} onLogout={handleLogout} />
               ) : (
-                <Navigate to="/login" />
+                <Navigate to="/home" replace />
               )
             }
           />
@@ -83,12 +100,23 @@ const App = () => {
           <Route
             path="*"
             element={
-              <h2 className="text-center mt-10 text-2xl">
-                404 - Page Not Found
-              </h2>
+              <div className="bg-white min-h-screen pt-32 flex items-center justify-center">
+                <h2 className="text-5xl font-bold font-mono tracking-tighter text-orange-500">
+                  404 - NOT FOUND
+                </h2>
+              </div>
             }
           />
         </Routes>
+
+        {/* Auth Modal */}
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={closeAuthModal}
+          mode={authMode}
+          onLoginSuccess={handleLoginSuccess}
+          onSwitchMode={(mode) => setAuthMode(mode)}
+        />
       </div>
     </ToastProvider>
   );

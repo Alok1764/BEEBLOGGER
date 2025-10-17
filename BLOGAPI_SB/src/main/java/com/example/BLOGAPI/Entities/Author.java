@@ -1,5 +1,8 @@
 package com.example.BLOGAPI.Entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -24,7 +27,6 @@ public class Author{
     @Column(nullable = false, length = 100,unique = true)
     private String userName;
 
-
     @Column (nullable = false,length=100)
     private String password;
 
@@ -35,6 +37,14 @@ public class Author{
 
     @Column(length = 500)
     private String bio;
+
+    private String authorPic;
+    private String githubLink;
+    private String linkedInLink;
+    private Long totalBlogs=0L;
+    private Long totalViews=0L;
+    private Long followers=0L;
+    private Long following=0L;
 
     @Column(length = 200)
     private String website;
@@ -47,25 +57,37 @@ public class Author{
     @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
-
     @ToString.Exclude
     @OneToMany(mappedBy = "author",fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Comment> comments;
 
     @ToString.Exclude
     @OneToMany(mappedBy = "author",cascade = CascadeType.REMOVE,orphanRemoval = true,fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<Post> posts=new ArrayList<>();
 
     @Builder
-    public Author(String userName, String email, String password, String bio, String website) {
+    public Author(String userName, String email, String password, String bio,String authorPic,
+                  String githubLink,String linkedInLink,Long totalBlogs, Long totalViews, Long followers, Long following,String website) {
         this.userName = userName;
         this.email = email;
         this.password = password;
         this.bio = bio;
+        this.authorPic=authorPic;
+        this.githubLink=githubLink;
+        this.linkedInLink=linkedInLink;
+        this.totalBlogs=totalBlogs;
+        this.totalViews=totalViews;
+        this.followers=followers;
+        this.following=following;
         this.website = website;
         this.comments=new ArrayList<>();
         this.posts = new ArrayList<>();
     }
+    public void incrementBlogCount(){totalBlogs++;}
+    public void incrementTotalFollowers(){followers++;}
+    public void incrementTotalFollowing(){following++;}
 
 
 }

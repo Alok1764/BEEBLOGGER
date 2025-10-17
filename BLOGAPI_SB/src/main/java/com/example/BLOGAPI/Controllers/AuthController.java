@@ -2,19 +2,20 @@ package com.example.BLOGAPI.Controllers;
 
 import com.example.BLOGAPI.DTOs.request.LoginReqDTO;
 import com.example.BLOGAPI.DTOs.request.RegisterReqDTO;
+import com.example.BLOGAPI.DTOs.response.AuthorDTO;
 import com.example.BLOGAPI.DTOs.response.LoginResDTO;
 import com.example.BLOGAPI.DTOs.response.RegisterResDTO;
 import com.example.BLOGAPI.Entities.Author;
+import com.example.BLOGAPI.Exceptions.ResourceNotFoundException;
 import com.example.BLOGAPI.Repositories.AuthorRepository;
 import com.example.BLOGAPI.Security.Services.AuthService;
 import com.example.BLOGAPI.Services.ServicesImpl.AuthorServiceImpl;
 import com.example.BLOGAPI.Services.ServicesImpl.OTPService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -89,4 +90,6 @@ public class AuthController {
 
     }
 
-    }
+
+
+}

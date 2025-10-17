@@ -2,12 +2,16 @@ package com.example.BLOGAPI.Security.Services;
 
 import com.example.BLOGAPI.DTOs.request.LoginReqDTO;
 import com.example.BLOGAPI.DTOs.request.RegisterReqDTO;
+import com.example.BLOGAPI.DTOs.response.AuthorDTO;
 import com.example.BLOGAPI.DTOs.response.LoginResDTO;
 import com.example.BLOGAPI.DTOs.response.RegisterResDTO;
 import com.example.BLOGAPI.Entities.Author;
+import com.example.BLOGAPI.Exceptions.ResourceNotFoundException;
 import com.example.BLOGAPI.Repositories.AuthorRepository;
 import com.example.BLOGAPI.Security.JWT.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,6 +19,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.lang.module.ResolutionException;
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -23,6 +29,7 @@ public class AuthService {
     private final JwtUtils jwtUtils;
     private final AuthorRepository authorRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ModelMapper modelMapper;
 
 
     public LoginResDTO login(LoginReqDTO loginReqDTO) {
@@ -61,4 +68,6 @@ public class AuthService {
         return new RegisterResDTO(author.getId(),author.getUserName());
 
     }
+
+
 }

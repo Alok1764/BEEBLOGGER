@@ -14,7 +14,13 @@ public class AuthorDTO {
     private String name;
     private String email;
     private String bio;
+    private String authorPic;
+    private String githubLink;
+    private String linkedInLink;
+    private Long totalBlogs;
+    private Long totalViews;
+    private Long followers;
+    private Long following;
     private String website;
     private LocalDateTime createdAt;
-    private Long postCount;
 }

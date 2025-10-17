@@ -4,6 +4,7 @@ import com.example.BLOGAPI.Entities.Post;
 import com.example.BLOGAPI.Enums.PostStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -22,7 +23,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 
     // Its very very costly
-
     @Query("SELECT p FROM Post p WHERE LOWER(p.title) LIKE LOWER(CONCAT('%',:keyword,'%')) OR " +
             "LOWER(p.content) LIKE LOWER(CONCAT('%',:keyword,'%'))")
     Page<Post> searchPosts(@Param("keyword") String keyword, Pageable pageable);
@@ -30,8 +30,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findByAuthorId(Long authorId, Pageable pageable);
 
-    @Query("SELECT p FROM Post p JOIN p.categories c WHERE c.id = :categoryId")
-    Page<Post> findByCategoryId(@Param("categoryId") Long categoryId, Pageable pageable);
+    //this is causing problem while pagination
+//    @Query("SELECT p FROM Post p JOIN p.categories c WHERE c.id = :categoryId")
+//    Page<Post> findByCategoryId(@Param("categoryId") Long categoryId,Pageable pageable);
+
+    //updated for multiply queries
+    @EntityGraph(attributePaths = {"categories"})
+    @Query("SELECT p FROM Post p JOIN p.categories c WHERE c.id IN :categoryIds")
+    Page<Post> findByCategoryIds(@Param("categoryIds") List<Long> categoryId, Pageable pageable);
 
 
 
