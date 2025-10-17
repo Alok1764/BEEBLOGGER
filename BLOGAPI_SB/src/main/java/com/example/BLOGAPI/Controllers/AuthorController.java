@@ -38,6 +38,11 @@ public class AuthorController {
      return ResponseEntity.ok(authorService.getAllAuthors(PageRequest.of(pageNo,pageSize,sort)));
  }
 
+    @GetMapping("/loggedIn-user")
+    public ResponseEntity<AuthorDTO> getCurrentUser(Authentication authentication) {
+
+        return ResponseEntity.ok(authorService.getLoggedInUser(authentication));
+    }
  @GetMapping("/{id}")
  ResponseEntity<AuthorDTO> getAuthorById(@PathVariable Long id){
      logger.info("GET /api/authors/{}",id);
@@ -74,10 +79,7 @@ public class AuthorController {
      return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/loggedIn-user")
-    public ResponseEntity<AuthorDTO> getCurrentUser(Authentication authentication) {
-        return ResponseEntity.ok(authorService.getLoggedInUser(authentication));
-    }
+
 
 
 

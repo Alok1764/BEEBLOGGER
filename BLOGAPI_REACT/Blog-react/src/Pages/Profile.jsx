@@ -41,6 +41,7 @@ const Profile = () => {
       const data = await res.json();
       setProfileData(data);
       setLoading(false);
+      console.log(data);
     } catch (error) {
       console.error("Error fetching profile:", error);
       setLoading(false);

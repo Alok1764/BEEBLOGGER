@@ -13,23 +13,13 @@ const BlogPage2 = () => {
   useEffect(() => {
     async function fetchBlogs() {
       try {
-        const tokenString = localStorage.getItem("jwtToken");
-        const tokenObj = JSON.parse(tokenString);
-        const token = tokenObj.jwtToken;
-
         let url = `http://localhost:8080/api/v1/posts?pageNo=${currentPage}&pageSize=${12}`;
 
         if (selectedCategories.length > 0) {
           url += `&categoryIds=${selectedCategories.join(",")}`;
         }
 
-        const res = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetch(url);
 
         if (!res.ok) {
           throw new Error(`HTTP error! Status: ${res.status}`);

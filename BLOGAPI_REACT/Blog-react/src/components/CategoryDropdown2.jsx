@@ -8,17 +8,7 @@ const CategoryDropdown2 = ({ onSearch }) => {
   useEffect(() => {
     async function fetchCategories() {
       try {
-        const tokenString = localStorage.getItem("jwtToken");
-        const tokenObj = JSON.parse(tokenString);
-        const token = tokenObj.jwtToken;
-
-        const res = await fetch("http://localhost:8080/api/v1/categories", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetch("http://localhost:8080/api/v1/categories");
 
         if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
         const data = await res.json();

@@ -5,6 +5,7 @@ import com.example.BLOGAPI.Security.JWT.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,7 +33,29 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth-> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/")
+
+                        .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/authors/**").permitAll()
+//                       .requestMatchers(HttpMethod.GET, "/api/v1/comments/**").permitAll()
+                        .requestMatchers("/authors/loggedIn-user").authenticated()
+                                .requestMatchers("/posts/my-posts").authenticated()
+
+
+                                .requestMatchers(HttpMethod.POST, "/posts/**").authenticated()
+                                .requestMatchers(HttpMethod.PUT, "/posts/**").authenticated()
+                                .requestMatchers(HttpMethod.PATCH, "/posts/**").authenticated()
+                                .requestMatchers(HttpMethod.DELETE, "/posts/**").authenticated()
+
+                                .requestMatchers(HttpMethod.POST, "/authors/**").authenticated()
+                                .requestMatchers(HttpMethod.PUT, "/authors/**").authenticated()
+                                .requestMatchers(HttpMethod.PATCH, "/authors/**").authenticated()
+                                .requestMatchers(HttpMethod.DELETE, "/authors/**").authenticated()
+
+                                .requestMatchers(HttpMethod.POST, "/comments/**").authenticated()
+                                .requestMatchers(HttpMethod.PUT, "/comments/**").authenticated()
+                                .requestMatchers(HttpMethod.DELETE, "/comments/**").authenticated()
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

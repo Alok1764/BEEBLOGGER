@@ -8,17 +8,7 @@ const SideBar2 = () => {
   useEffect(() => {
     async function fetchPopularBlogs() {
       try {
-        const tokenString = localStorage.getItem("jwtToken");
-        const tokenObj = JSON.parse(tokenString);
-        const token = tokenObj.jwtToken;
-
-        const res = await fetch("http://localhost:8080/api/v1/posts/popular", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetch("http://localhost:8080/api/v1/posts/popular");
 
         if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
         const data = await res.json();

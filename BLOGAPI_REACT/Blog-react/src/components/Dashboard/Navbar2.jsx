@@ -24,7 +24,7 @@ const Navbar2 = ({ onLogout, isLoggedIn, onLoginClick }) => {
       const token = tokenObj.jwtToken;
 
       const res = await fetch(
-        "http://localhost:8080/api/v1/auth/loggedIn-user",
+        "http://localhost:8080/api/v1/authors/loggedIn-user",
         {
           method: "GET",
           headers: {

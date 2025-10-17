@@ -6,6 +6,7 @@ import com.example.BLOGAPI.Exceptions.ResourceNotFoundException;
 import com.example.BLOGAPI.Repositories.AuthorRepository;
 import com.example.BLOGAPI.Services.ServicesInterfaces.AuthorService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthorServiceImpl implements AuthorService {
@@ -67,10 +69,12 @@ public class AuthorServiceImpl implements AuthorService {
     public boolean authorExitsByEmail(String email) {
          return authorRepository.existsByEmail(email);
     }
+
     public AuthorDTO getLoggedInUser(Authentication authentication) {
-        String username = authentication.getName();
-        Author author = authorRepository.findByUserName(username)
-                .orElseThrow(() -> new ResourceNotFoundException("Author not found: "+username));
+        String userName = authentication.getName();
+
+        Author author = authorRepository.findByUserName(userName)
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found: "+userName));
         return modelMapper.map(author,AuthorDTO.class);
 
     }
