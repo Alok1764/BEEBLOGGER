@@ -56,8 +56,8 @@ public class Post {
     @Column
     private LocalDateTime publishedAt;
 
-    @Column(columnDefinition = "int default 0")
-    private Integer viewCount = 0;
+    @Column(nullable = false, columnDefinition = "bigint default 0")
+    private Long viewCount = 0L;
 
     private String readingTime;
 
@@ -89,14 +89,12 @@ public class Post {
         this.content = content;
         this.status = (status != null) ? status : PostStatus.DRAFT;
         this.author = author;
-        this.viewCount = 0;
+        this.viewCount=0L;
         this.readingTime=readingTime;
         this.comments = new ArrayList<>();
         this.categories = (categories != null) ? categories : new HashSet<>();
     }
-    public void incrementViewCount() {
-        this.viewCount++;
-    }
+
 
 
 

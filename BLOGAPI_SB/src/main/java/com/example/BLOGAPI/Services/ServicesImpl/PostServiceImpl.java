@@ -56,15 +56,16 @@ public class PostServiceImpl {
         return postsPage.map(post-> modelMapper.map(post,PostDTO.class));
     }
 
+    // here instead to update the whole table and its updating every time on called so I have used update query
+    //and since using transactional it will save its own
     @Transactional
     public PostDTO getPostById(Long id) {
         Post post= postRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Post not found with id: "+id));
 
-        post.incrementViewCount();
-        Post savedPost=postRepository.save(post);
-
-        return modelMapper.map(savedPost,PostDTO.class);
+        postRepository.IncrementPostViewCount(id);
+        authorRepository.IncrementAuthorTotalViews(post.getAuthor().getId());
+        return modelMapper.map(post,PostDTO.class);
     }
 
 
@@ -112,10 +113,11 @@ public Page<PostDTO> getPostsByCategory(List<Long> categoryIds, Pageable pageabl
                 .map(posts ->modelMapper.map(posts,PostDTO.class))
                 .collect(Collectors.toList());
     }
+    @Transactional
     public PostDTO createPost(PostCreatedDTO postCreatedDTO){
         Author author=authorRepository.findById(postCreatedDTO.getAuthorId())
                 .orElseThrow(()->new ResourceNotFoundException("Author not found with id: "+postCreatedDTO.getAuthorId()));
-
+        authorRepository.IncrementAuthorTotalBlogs(author.getId());
         Set<Category> categories= new HashSet<>(categoryRepository.findAllById(postCreatedDTO.getCategoryIds()));
 
         Post post= Post.builder()
@@ -125,9 +127,9 @@ public Page<PostDTO> getPostsByCategory(List<Long> categoryIds, Pageable pageabl
                 .author(author)
                 .categories(categories)
                 .build();
-         Post savedPost =postRepository.save(post);
 
-        return modelMapper.map(savedPost,PostDTO.class);
+
+        return modelMapper.map(post,PostDTO.class);
     }
 
     public PostDTO updatePost(Long id,PostCreatedDTO postCreatedDTO) {

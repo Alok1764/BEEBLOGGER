@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
-import Input from "../Shared/Input";
+import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { registerUser } from "../../Services/api";
 
 const RegisterForm = ({ onRegisterSuccess, setMessage }) => {
@@ -23,7 +22,7 @@ const RegisterForm = ({ onRegisterSuccess, setMessage }) => {
   const validateForm = () => {
     if (formData.password !== formData.confirmPassword) {
       setMessage({
-        text: "❌ Passwords do not match!",
+        text: "❌ PASSWORDS DO NOT MATCH",
         type: "error",
       });
       return false;
@@ -31,7 +30,7 @@ const RegisterForm = ({ onRegisterSuccess, setMessage }) => {
 
     if (formData.password.length < 6) {
       setMessage({
-        text: "❌ Password must be at least 6 characters!",
+        text: "❌ PASSWORD MUST BE AT LEAST 6 CHARACTERS",
         type: "error",
       });
       return false;
@@ -54,7 +53,7 @@ const RegisterForm = ({ onRegisterSuccess, setMessage }) => {
       await registerUser(formData);
 
       setMessage({
-        text: "✅ Registration Successful! Please login.",
+        text: "✅ REGISTRATION SUCCESSFUL! PLEASE LOGIN.",
         type: "success",
       });
 
@@ -68,11 +67,9 @@ const RegisterForm = ({ onRegisterSuccess, setMessage }) => {
       setTimeout(() => {
         onRegisterSuccess();
       }, 2000);
-
-      console.log("Registration successful!");
     } catch (error) {
       setMessage({
-        text: `❌ ${error.message}`,
+        text: `❌ ${error.message.toUpperCase()}`,
         type: "error",
       });
     } finally {
@@ -81,88 +78,101 @@ const RegisterForm = ({ onRegisterSuccess, setMessage }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <Input
-        label="Username"
-        type="text"
-        name="userName"
-        value={formData.userName}
-        onChange={handleChange}
-        placeholder="Choose a username"
-        icon={User}
-        required
-      />
-
-      <Input
-        label="Email"
-        type="email"
-        name="email"
-        value={formData.email}
-        onChange={handleChange}
-        placeholder="your.email@example.com"
-        icon={Mail}
-        required
-      />
-
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Username */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Password
+        <label className="block text-xs font-mono tracking-widest text-orange-500 mb-2">
+          USERNAME
         </label>
         <div className="relative">
-          <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+          <FaUser className="absolute left-4 top-4 w-4 h-4 text-orange-500" />
+          <input
+            type="text"
+            name="userName"
+            value={formData.userName}
+            onChange={handleChange}
+            placeholder="CHOOSE USERNAME"
+            required
+            className="w-full pl-12 pr-4 py-3 border border-orange-500 bg-white text-orange-500 font-mono text-sm tracking-wider focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition"
+          />
+        </div>
+      </div>
+
+      {/* Email */}
+      <div>
+        <label className="block text-xs font-mono tracking-widest text-orange-500 mb-2">
+          EMAIL
+        </label>
+        <div className="relative">
+          <FaEnvelope className="absolute left-4 top-4 w-4 h-4 text-orange-500" />
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="YOUR@EMAIL.COM"
+            required
+            className="w-full pl-12 pr-4 py-3 border border-orange-500 bg-white text-orange-500 font-mono text-sm tracking-wider focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition"
+          />
+        </div>
+      </div>
+
+      {/* Password */}
+      <div>
+        <label className="block text-xs font-mono tracking-widest text-orange-500 mb-2">
+          PASSWORD
+        </label>
+        <div className="relative">
+          <FaLock className="absolute left-4 top-4 w-4 h-4 text-orange-500" />
           <input
             type={showPassword ? "text" : "password"}
             name="password"
             value={formData.password}
             onChange={handleChange}
-            placeholder="Create a password"
+            placeholder="CREATE PASSWORD"
             required
-            className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg 
-                     focus:ring-2 focus:ring-indigo-500 focus:border-transparent 
-                     outline-none transition"
+            className="w-full pl-12 pr-12 py-3 border border-orange-500 bg-white text-orange-500 font-mono text-sm tracking-wider focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+            className="absolute right-4 top-4 text-orange-500 hover:opacity-50 transition-opacity"
           >
             {showPassword ? (
-              <EyeOff className="w-5 h-5" />
+              <FaEyeSlash className="w-4 h-4" />
             ) : (
-              <Eye className="w-5 h-5" />
+              <FaEye className="w-4 h-4" />
             )}
           </button>
         </div>
       </div>
 
+      {/* Confirm Password */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Confirm Password
+        <label className="block text-xs font-mono tracking-widest text-orange-500 mb-2">
+          CONFIRM PASSWORD
         </label>
         <div className="relative">
-          <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+          <FaLock className="absolute left-4 top-4 w-4 h-4 text-orange-500" />
           <input
             type={showPassword ? "text" : "password"}
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
-            placeholder="Confirm your password"
+            placeholder="CONFIRM PASSWORD"
             required
-            className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg 
-                     focus:ring-2 focus:ring-indigo-500 focus:border-transparent 
-                     outline-none transition"
+            className="w-full pl-12 pr-4 py-3 border border-orange-500 bg-white text-orange-500 font-mono text-sm tracking-wider focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition"
           />
         </div>
       </div>
 
+      {/* Submit Button */}
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium 
-                 hover:bg-indigo-700 transition disabled:opacity-50 
-                 disabled:cursor-not-allowed"
+        className="w-full bg-orange-500 text-white py-4 font-mono text-sm tracking-widest hover:bg-white hover:text-orange-500 border border-orange-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {loading ? "Creating Account..." : "Create Account"}
+        {loading ? "CREATING ACCOUNT..." : "CREATE ACCOUNT"}
       </button>
     </form>
   );

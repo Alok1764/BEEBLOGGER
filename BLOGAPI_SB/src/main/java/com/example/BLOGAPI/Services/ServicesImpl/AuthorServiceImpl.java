@@ -41,8 +41,8 @@ public class AuthorServiceImpl implements AuthorService {
         return modelMapper.map(author,AuthorDTO.class);
     }
     @Override
-    public List<AuthorDTO> getAuthorByUserName(String keyword) {
-        return authorRepository.findByUserNameContainingIgnoreCase(keyword)
+    public List<AuthorDTO> getAuthorByUserName(String userName) {
+        return authorRepository.findByUserNameContainingIgnoreCase(userName)
                 .stream()
                 .map(authors -> modelMapper.map(authors,AuthorDTO.class))
                 .collect(Collectors.toList());
@@ -77,5 +77,12 @@ public class AuthorServiceImpl implements AuthorService {
                 .orElseThrow(() -> new ResourceNotFoundException("Author not found: "+userName));
         return modelMapper.map(author,AuthorDTO.class);
 
+    }
+
+    public List<AuthorDTO> getPopularAuthors() {
+        return authorRepository.findTop5ByOrderByTotalViewsDesc()
+                .stream()
+                .map(author -> modelMapper.map(author,AuthorDTO.class))
+                .collect(Collectors.toList());
     }
 }

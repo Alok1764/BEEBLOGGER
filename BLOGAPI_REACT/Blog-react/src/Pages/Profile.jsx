@@ -41,7 +41,6 @@ const Profile = () => {
       const data = await res.json();
       setProfileData(data);
       setLoading(false);
-      console.log(data);
     } catch (error) {
       console.error("Error fetching profile:", error);
       setLoading(false);
@@ -269,7 +268,7 @@ const Profile = () => {
           {/* Right Side - Stats & Blogs */}
           <div className="lg:col-span-8">
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-px bg-orange-500 mb-12">
+            <div className="grid grid-cols-4 gap-px bg-orange-500 mb-12">
               <div className="bg-white p-8 text-center">
                 <div className="text-4xl font-bold font-mono tracking-tighter text-orange-500 mb-2">
                   {profileData.totalBlogs || 0}
@@ -280,7 +279,7 @@ const Profile = () => {
               </div>
               <div className="bg-white p-8 text-center">
                 <div className="text-4xl font-bold font-mono tracking-tighter text-orange-500 mb-2">
-                  0
+                  {profileData.totalViews}
                 </div>
                 <div className="font-mono text-xs tracking-widest text-orange-500 opacity-70">
                   TOTAL VIEWS
@@ -292,6 +291,14 @@ const Profile = () => {
                 </div>
                 <div className="font-mono text-xs tracking-widest text-orange-500 opacity-70">
                   FOLLOWERS
+                </div>
+              </div>
+              <div className="bg-white p-8 text-center">
+                <div className="text-4xl font-bold font-mono tracking-tighter text-orange-500 mb-2">
+                  0
+                </div>
+                <div className="font-mono text-xs tracking-widest text-orange-500 opacity-70">
+                  FOLLOWINGS
                 </div>
               </div>
             </div>
@@ -310,12 +317,12 @@ const Profile = () => {
                 </div>
               ) : (
                 <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-orange-500">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-px ">
                     {blogs.map((blog) => (
                       <Link
                         key={blog.id}
                         to={`/blogs/${blog.id}`}
-                        className="bg-white p-6 hover:bg-orange-500 hover:text-white transition-all group"
+                        className="bg-white p-6 hover:bg-orange-500 hover:text-white transition-all group border-orange-500"
                       >
                         <div className="mb-4">
                           {blog.image && (

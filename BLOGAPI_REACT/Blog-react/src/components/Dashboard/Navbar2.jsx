@@ -81,6 +81,19 @@ const Navbar2 = ({ onLogout, isLoggedIn, onLoginClick }) => {
               >
                 HOME
               </NavLink>
+
+              <NavLink
+                to="/authors"
+                className="transition-opacity hover:opacity-50"
+              >
+                AUTHORS
+              </NavLink>
+              <NavLink
+                to="/blogs"
+                className="transition-opacity hover:opacity-50"
+              >
+                BLOGS
+              </NavLink>
               <NavLink
                 to="/services"
                 className="transition-opacity hover:opacity-50"
@@ -92,12 +105,6 @@ const Navbar2 = ({ onLogout, isLoggedIn, onLoginClick }) => {
                 className="transition-opacity hover:opacity-50"
               >
                 ABOUT
-              </NavLink>
-              <NavLink
-                to="/blogs"
-                className="transition-opacity hover:opacity-50"
-              >
-                BLOGS
               </NavLink>
               <NavLink
                 to="/contact"
@@ -119,14 +126,14 @@ const Navbar2 = ({ onLogout, isLoggedIn, onLoginClick }) => {
               {isLoggedIn ? (
                 <button
                   onClick={toggleProfile}
-                  className="border border-orange-500 p-3 text-orange-500 hover:bg-orange-500 hover:text-white transition-all"
+                  className="border border-orange-500 p-3 text-orange-500 hover:bg-orange-500 hover:text-white transition-all hover:cursor-pointer"
                 >
                   <FaUser className="w-5 h-5" />
                 </button>
               ) : (
                 <button
                   onClick={onLoginClick}
-                  className="border border-orange-500 px-8 py-3 font-mono text-sm tracking-widest text-orange-500 hover:bg-orange-500 hover:text-white transition-all"
+                  className="border border-orange-500 px-8 py-3 font-mono text-sm tracking-widest text-orange-500 hover:bg-orange-500 hover:text-white transition-all hover:cursor-pointer"
                 >
                   LOGIN
                 </button>
@@ -149,7 +156,7 @@ const Navbar2 = ({ onLogout, isLoggedIn, onLoginClick }) => {
         <div>
           <div
             className={`md:hidden text-sm font-mono tracking-widest space-y-6 px-12 py-12 bg-white border-b border-orange-500 transition-all duration-300 text-orange-500 
-              ${isMenuOpen ? "fixed top-0 w-full z-40" : "hidden"}`}
+              ${isMenuOpen ? "fixed top-[50px] w-full z-40" : "hidden"}`}
           >
             <div className="text-orange-500 flex flex-col space-y-6">
               {isLoggedIn ? (
@@ -183,6 +190,20 @@ const Navbar2 = ({ onLogout, isLoggedIn, onLoginClick }) => {
                 HOME
               </NavLink>
               <NavLink
+                to="/authors"
+                className="transition-opacity hover:opacity-50"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                AUTHORS
+              </NavLink>
+              <NavLink
+                to="/blogs"
+                className="transition-opacity hover:opacity-50"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                BLOGS
+              </NavLink>
+              <NavLink
                 to="/services"
                 className="transition-opacity hover:opacity-50"
                 onClick={() => setIsMenuOpen(false)}
@@ -196,13 +217,7 @@ const Navbar2 = ({ onLogout, isLoggedIn, onLoginClick }) => {
               >
                 ABOUT
               </NavLink>
-              <NavLink
-                to="/blogs"
-                className="transition-opacity hover:opacity-50"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                BLOGS
-              </NavLink>
+
               <NavLink
                 to="/contact"
                 className="transition-opacity hover:opacity-50"

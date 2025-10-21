@@ -22,7 +22,7 @@ public class PostDTO {
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime publishedAt;
-    private Integer viewCount;
+    private Long viewCount;
     private String readingTime;
     private Set<Category> categories;
 }

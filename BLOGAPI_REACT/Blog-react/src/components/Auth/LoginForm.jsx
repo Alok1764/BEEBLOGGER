@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { User, Lock, Eye, EyeOff } from "lucide-react";
-import Input from "../Shared/Input";
+import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { loginUser } from "../../Services/api";
 import { saveToken, getUserFromToken } from "../../Utils/auth";
 import { useToast } from "../../Contexts/ToastContext";
@@ -30,20 +29,15 @@ const LoginForm = ({ onLoginSuccess, setMessage }) => {
 
     try {
       const token = await loginUser(formData.userName, formData.password);
-
       saveToken(token);
-
       const userInfo = getUserFromToken();
 
       toast.success("Login successful! Welcome back!");
-
       setFormData({ userName: "", password: "" });
 
       setTimeout(() => {
         onLoginSuccess(userInfo);
       }, 1000);
-
-      console.log("Login successful!", userInfo);
     } catch (error) {
       setMessage({
         text: `❌ ${error.message}`,
@@ -55,57 +49,63 @@ const LoginForm = ({ onLoginSuccess, setMessage }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <Input
-        label="Username"
-        type="text"
-        name="userName"
-        value={formData.userName}
-        onChange={handleChange}
-        placeholder="Enter your username"
-        icon={User}
-        required
-      />
-
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Username */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Password
+        <label className="block text-xs font-mono tracking-widest text-orange-500 mb-2">
+          USERNAME
         </label>
         <div className="relative">
-          <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+          <FaUser className="absolute left-4 top-4 w-4 h-4 text-orange-500" />
+          <input
+            type="text"
+            name="userName"
+            value={formData.userName}
+            onChange={handleChange}
+            placeholder="ENTER USERNAME"
+            required
+            className="w-full pl-12 pr-4 py-3 border border-orange-500 bg-white text-orange-500 font-mono text-sm tracking-wider focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition"
+          />
+        </div>
+      </div>
+
+      {/* Password */}
+      <div>
+        <label className="block text-xs font-mono tracking-widest text-orange-500 mb-2">
+          PASSWORD
+        </label>
+        <div className="relative">
+          <FaLock className="absolute left-4 top-4 w-4 h-4 text-orange-500" />
           <input
             type={showPassword ? "text" : "password"}
             name="password"
             value={formData.password}
             onChange={handleChange}
-            placeholder="Enter your password"
+            placeholder="ENTER PASSWORD"
             required
-            className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg 
-                     focus:ring-2 focus:ring-indigo-500 focus:border-transparent 
-                     outline-none transition"
+            className="w-full pl-12 pr-12 py-3 border border-orange-500 bg-white text-orange-500 font-mono text-sm tracking-wider focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+            className="absolute right-4 top-4 text-orange-500 hover:opacity-50 transition-opacity"
           >
             {showPassword ? (
-              <EyeOff className="w-5 h-5" />
+              <FaEyeSlash className="w-4 h-4" />
             ) : (
-              <Eye className="w-5 h-5" />
+              <FaEye className="w-4 h-4" />
             )}
           </button>
         </div>
       </div>
 
+      {/* Submit Button */}
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium 
-                 hover:bg-indigo-700 transition disabled:opacity-50 
-                 disabled:cursor-not-allowed"
+        className="w-full bg-orange-500 text-white py-4 font-mono text-sm tracking-widest hover:bg-white hover:text-orange-500 border border-orange-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        {loading ? "Logging in..." : "Login"}
+        {loading ? "LOGGING IN..." : "LOGIN"}
       </button>
     </form>
   );

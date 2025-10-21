@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -34,13 +33,20 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth-> auth
                         .requestMatchers("/auth/**").permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/authors/**").permitAll()
-//                       .requestMatchers(HttpMethod.GET, "/api/v1/comments/**").permitAll()
-                        .requestMatchers("/authors/loggedIn-user").authenticated()
-                                .requestMatchers("/posts/my-posts").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/posts/popular/**", "/posts/recent/**", "/posts/search/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/posts/my-posts").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/posts/*").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/posts/**").permitAll()
 
+                        .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()
+
+                                .requestMatchers(HttpMethod.GET, "/authors/search/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/authors/popular/**").permitAll()
+                                .requestMatchers("/authors/loggedIn-user").authenticated()
+                                .requestMatchers("/authors/*").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/authors/**").permitAll()
+
+//                       .requestMatchers(HttpMethod.GET, "/api/v1/comments/**").permitAll()
 
                                 .requestMatchers(HttpMethod.POST, "/posts/**").authenticated()
                                 .requestMatchers(HttpMethod.PUT, "/posts/**").authenticated()

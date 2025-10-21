@@ -18,7 +18,7 @@ const Banner2 = () => {
           </p>
           <div>
             <Link
-              to="/"
+              to="/blogs"
               className="font-mono text-xs tracking-widest text-orange-500 hover:opacity-50 inline-flex items-center transition-opacity"
             >
               LEARN MORE

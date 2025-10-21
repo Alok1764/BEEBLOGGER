@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -23,9 +24,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 
     // Its very very costly
-    @Query("SELECT p FROM Post p WHERE LOWER(p.title) LIKE LOWER(CONCAT('%',:keyword,'%')) OR " +
-            "LOWER(p.content) LIKE LOWER(CONCAT('%',:keyword,'%'))")
+    @Query("SELECT p FROM Post p WHERE LOWER(p.title) LIKE LOWER(CONCAT('%',:keyword,'%'))")
     Page<Post> searchPosts(@Param("keyword") String keyword, Pageable pageable);
+
 
 
     Page<Post> findByAuthorId(Long authorId, Pageable pageable);
@@ -67,5 +68,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     boolean existsBySlug(String slug);
 
-
+    @Modifying
+    @Query("UPDATE Post p SET p.viewCount=p.viewCount+1 WHERE p.id= :id")
+    void IncrementPostViewCount(@Param("id") Long id);
 }

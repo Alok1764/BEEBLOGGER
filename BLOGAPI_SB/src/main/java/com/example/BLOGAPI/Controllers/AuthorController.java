@@ -37,7 +37,10 @@ public class AuthorController {
      else sort=Sort.by(sortedBy).descending();
      return ResponseEntity.ok(authorService.getAllAuthors(PageRequest.of(pageNo,pageSize,sort)));
  }
-
+    @GetMapping("/popular")
+    public ResponseEntity<List<AuthorDTO>> getPopularAuthors(){
+     return ResponseEntity.ok(authorService.getPopularAuthors());
+    }
     @GetMapping("/loggedIn-user")
     public ResponseEntity<AuthorDTO> getCurrentUser(Authentication authentication) {
 
@@ -50,10 +53,10 @@ public class AuthorController {
  }
 
     @GetMapping("/search")
-    ResponseEntity<List<AuthorDTO>> getAuthorByName(@RequestParam String keyword){
-        logger.info("GET /api/authors/search?name=keyword");
+    ResponseEntity<List<AuthorDTO>> getAuthorByName(@RequestParam String userName){
+        logger.info("GET /api/authors/search?username=keyword");
 
-        return ResponseEntity.ok(authorService.getAuthorByUserName(keyword));
+        return ResponseEntity.ok(authorService.getAuthorByUserName(userName));
     }
 
 

@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-import { Mail, Lock, ArrowLeft, Shield } from "lucide-react";
+import { FaEnvelope, FaLock, FaArrowLeft, FaShieldAlt } from "react-icons/fa";
 import { sendOTP, verifyOTP, resetPassword } from "../../Services/api";
 import { useToast } from "../../Contexts/ToastContext";
-import Input from "../Shared/Input";
 
 const ForgotPassword = ({ onBack }) => {
   const toast = useToast();
 
-  const [step, setStep] = useState("email");
+  const [step, setStep] = useState("email"); // "email", "otp", "password"
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -24,6 +23,7 @@ const ForgotPassword = ({ onBack }) => {
     });
   };
 
+  // Step 1: Send OTP
   const handleSendOTP = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -39,6 +39,7 @@ const ForgotPassword = ({ onBack }) => {
     }
   };
 
+  // Step 2: Verify OTP
   const handleVerifyOTP = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -54,6 +55,7 @@ const ForgotPassword = ({ onBack }) => {
     }
   };
 
+  // Step 3: Reset Password
   const handleResetPassword = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -85,197 +87,197 @@ const ForgotPassword = ({ onBack }) => {
   };
 
   return (
-    <div
-      className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 
-                    flex items-center justify-center p-4"
-    >
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
-        <div className="text-center mb-8">
-          <div
-            className="w-16 h-16 bg-indigo-100 rounded-full flex items-center 
-                         justify-center mx-auto mb-4"
-          >
-            <Shield className="w-8 h-8 text-indigo-600" />
-          </div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Reset Password
-          </h1>
-          <p className="text-gray-600">
-            {step === "email" && "Enter your email to receive OTP"}
-            {step === "otp" && "Enter the OTP sent to your email"}
-            {step === "password" && "Create your new password"}
-          </p>
+    <div className="w-full">
+      {/* Header */}
+      <div className="text-center mb-8 pb-6 border-b border-orange-500">
+        <div className="w-16 h-16 border-2 border-orange-500 flex items-center justify-center mx-auto mb-4">
+          <FaShieldAlt className="w-8 h-8 text-orange-500" />
         </div>
-
-        <div className="flex items-center justify-center mb-8">
-          <div className="flex items-center gap-2">
-            <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center 
-                           ${
-                             step === "email"
-                               ? "bg-indigo-600 text-white"
-                               : "bg-green-500 text-white"
-                           }`}
-            >
-              {step === "email" ? "1" : "✓"}
-            </div>
-            <div className="w-12 h-1 bg-gray-300"></div>
-            <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center 
-                           ${
-                             step === "otp"
-                               ? "bg-indigo-600 text-white"
-                               : step === "password"
-                               ? "bg-green-500 text-white"
-                               : "bg-gray-300 text-gray-600"
-                           }`}
-            >
-              {step === "password" ? "✓" : "2"}
-            </div>
-            <div className="w-12 h-1 bg-gray-300"></div>
-            <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center 
-                           ${
-                             step === "password"
-                               ? "bg-indigo-600 text-white"
-                               : "bg-gray-300 text-gray-600"
-                           }`}
-            >
-              3
-            </div>
-          </div>
-        </div>
-
-        {step === "email" && (
-          <form onSubmit={handleSendOTP} className="space-y-4">
-            <Input
-              label="Email Address"
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="your.email@example.com"
-              icon={Mail}
-              required
-            />
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium 
-                       hover:bg-indigo-700 transition disabled:opacity-50"
-            >
-              {loading ? "Sending OTP..." : "Send OTP"}
-            </button>
-          </form>
-        )}
-
-        {step === "otp" && (
-          <form onSubmit={handleVerifyOTP} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Enter OTP
-              </label>
-              <input
-                type="text"
-                name="otp"
-                value={formData.otp}
-                onChange={handleChange}
-                placeholder="123456"
-                maxLength={6}
-                required
-                className="w-full py-3 px-4 border border-gray-300 rounded-lg 
-                         text-center text-2xl font-bold tracking-widest
-                         focus:ring-2 focus:ring-indigo-500 focus:border-transparent 
-                         outline-none transition"
-              />
-              <p className="text-xs text-gray-500 mt-2 text-center">
-                Check your email for the 6-digit OTP
-              </p>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium 
-                       hover:bg-indigo-700 transition disabled:opacity-50"
-            >
-              {loading ? "Verifying..." : "Verify OTP"}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleSendOTP({ preventDefault: () => {} })}
-              disabled={loading}
-              className="w-full text-indigo-600 text-sm hover:underline"
-            >
-              Didn't receive OTP? Resend
-            </button>
-          </form>
-        )}
-
-        {step === "password" && (
-          <form onSubmit={handleResetPassword} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                New Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                <input
-                  type="password"
-                  name="newPassword"
-                  value={formData.newPassword}
-                  onChange={handleChange}
-                  placeholder="Enter new password"
-                  required
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg 
-                           focus:ring-2 focus:ring-indigo-500 focus:border-transparent 
-                           outline-none transition"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Confirm new password"
-                  required
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg 
-                           focus:ring-2 focus:ring-indigo-500 focus:border-transparent 
-                           outline-none transition"
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium 
-                       hover:bg-indigo-700 transition disabled:opacity-50"
-            >
-              {loading ? "Resetting Password..." : "Reset Password"}
-            </button>
-          </form>
-        )}
-
-        <button
-          onClick={onBack}
-          className="mt-6 w-full flex items-center justify-center gap-2 
-                   text-gray-600 hover:text-gray-800 transition"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Login
-        </button>
+        <h1 className="text-4xl font-bold font-mono tracking-tighter text-orange-500 mb-2">
+          RESET PASSWORD
+        </h1>
+        <p className="text-xs font-mono tracking-widest text-orange-500 opacity-70">
+          {step === "email" && "ENTER YOUR EMAIL"}
+          {step === "otp" && "ENTER OTP CODE"}
+          {step === "password" && "CREATE NEW PASSWORD"}
+        </p>
       </div>
+
+      {/* Progress Indicator */}
+      <div className="flex items-center justify-center mb-8">
+        <div className="flex items-center gap-2">
+          {/* Step 1 */}
+          <div
+            className={`w-10 h-10 border-2 flex items-center justify-center font-mono text-sm font-bold transition-all ${
+              step === "email"
+                ? "border-orange-500 bg-orange-500 text-white"
+                : step === "otp" || step === "password"
+                ? "border-orange-500 bg-white text-orange-500"
+                : "border-gray-300 bg-white text-gray-400"
+            }`}
+          >
+            {step === "otp" || step === "password" ? "✓" : "1"}
+          </div>
+
+          <div className="w-12 h-px bg-orange-500"></div>
+
+          {/* Step 2 */}
+          <div
+            className={`w-10 h-10 border-2 flex items-center justify-center font-mono text-sm font-bold transition-all ${
+              step === "otp"
+                ? "border-orange-500 bg-orange-500 text-white"
+                : step === "password"
+                ? "border-orange-500 bg-white text-orange-500"
+                : "border-gray-300 bg-white text-gray-400"
+            }`}
+          >
+            {step === "password" ? "✓" : "2"}
+          </div>
+
+          <div className="w-12 h-px bg-orange-500"></div>
+
+          {/* Step 3 */}
+          <div
+            className={`w-10 h-10 border-2 flex items-center justify-center font-mono text-sm font-bold transition-all ${
+              step === "password"
+                ? "border-orange-500 bg-orange-500 text-white"
+                : "border-gray-300 bg-white text-gray-400"
+            }`}
+          >
+            3
+          </div>
+        </div>
+      </div>
+
+      {/* Step 1: Email Input */}
+      {step === "email" && (
+        <form onSubmit={handleSendOTP} className="space-y-6">
+          <div>
+            <label className="block text-xs font-mono tracking-widest text-orange-500 mb-2">
+              EMAIL ADDRESS
+            </label>
+            <div className="relative">
+              <FaEnvelope className="absolute left-4 top-4 w-4 h-4 text-orange-500" />
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="YOUR@EMAIL.COM"
+                required
+                className="w-full pl-12 pr-4 py-3 border border-orange-500 bg-white text-orange-500 font-mono text-sm tracking-wider focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-orange-500 text-white py-4 font-mono text-sm tracking-widest hover:bg-white hover:text-orange-500 border border-orange-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "SENDING OTP..." : "SEND OTP"}
+          </button>
+        </form>
+      )}
+
+      {/* Step 2: OTP Input */}
+      {step === "otp" && (
+        <form onSubmit={handleVerifyOTP} className="space-y-6">
+          <div>
+            <label className="block text-xs font-mono tracking-widest text-orange-500 mb-2">
+              ENTER OTP
+            </label>
+            <input
+              type="text"
+              name="otp"
+              value={formData.otp}
+              onChange={handleChange}
+              placeholder="123456"
+              maxLength={6}
+              required
+              className="w-full py-4 px-4 border-2 border-orange-500 bg-white text-orange-500 text-center text-3xl font-mono font-bold tracking-widest focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition"
+            />
+            <p className="text-xs font-mono tracking-wider text-orange-500 opacity-50 mt-2 text-center">
+              CHECK YOUR EMAIL FOR 6-DIGIT CODE
+            </p>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-orange-500 text-white py-4 font-mono text-sm tracking-widest hover:bg-white hover:text-orange-500 border border-orange-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "VERIFYING..." : "VERIFY OTP"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => handleSendOTP({ preventDefault: () => {} })}
+            disabled={loading}
+            className="w-full text-xs font-mono tracking-widest text-orange-500 hover:opacity-50 transition-opacity"
+          >
+            DIDN'T RECEIVE? RESEND OTP
+          </button>
+        </form>
+      )}
+
+      {/* Step 3: New Password */}
+      {step === "password" && (
+        <form onSubmit={handleResetPassword} className="space-y-6">
+          <div>
+            <label className="block text-xs font-mono tracking-widest text-orange-500 mb-2">
+              NEW PASSWORD
+            </label>
+            <div className="relative">
+              <FaLock className="absolute left-4 top-4 w-4 h-4 text-orange-500" />
+              <input
+                type="password"
+                name="newPassword"
+                value={formData.newPassword}
+                onChange={handleChange}
+                placeholder="ENTER NEW PASSWORD"
+                required
+                className="w-full pl-12 pr-4 py-3 border border-orange-500 bg-white text-orange-500 font-mono text-sm tracking-wider focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-mono tracking-widest text-orange-500 mb-2">
+              CONFIRM PASSWORD
+            </label>
+            <div className="relative">
+              <FaLock className="absolute left-4 top-4 w-4 h-4 text-orange-500" />
+              <input
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="CONFIRM PASSWORD"
+                required
+                className="w-full pl-12 pr-4 py-3 border border-orange-500 bg-white text-orange-500 font-mono text-sm tracking-wider focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-orange-500 text-white py-4 font-mono text-sm tracking-widest hover:bg-white hover:text-orange-500 border border-orange-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "RESETTING..." : "RESET PASSWORD"}
+          </button>
+        </form>
+      )}
+
+      {/* Back Button */}
+      <button
+        onClick={onBack}
+        className="mt-8 w-full flex items-center justify-center gap-2 text-xs font-mono tracking-widest text-orange-500 hover:opacity-50 transition-opacity"
+      >
+        <FaArrowLeft className="w-3 h-3" />
+        BACK TO LOGIN
+      </button>
     </div>
   );
 };

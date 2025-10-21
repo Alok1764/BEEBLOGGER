@@ -4,7 +4,7 @@ import Pagination2 from "./Pagination2";
 import CategoryDropdown2 from "./CategoryDropdown2";
 import SideBar2 from "./Sidebar2";
 
-const BlogPage2 = () => {
+const BlogPage2 = ({ isLoggedIn, onAuthRequired }) => {
   const [blogs, setBlogs] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -51,7 +51,11 @@ const BlogPage2 = () => {
       <div className="h-px w-full bg-orange-500 mb-20"></div>
 
       <div className="flex flex-col lg:flex-row gap-20">
-        <BlogCards2 blogs={blogs} />
+        <BlogCards2
+          blogs={blogs}
+          isLoggedIn={isLoggedIn}
+          onAuthRequired={onAuthRequired}
+        />
         <div>
           <SideBar2 />
         </div>

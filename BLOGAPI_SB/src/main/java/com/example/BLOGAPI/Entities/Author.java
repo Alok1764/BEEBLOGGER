@@ -41,10 +41,19 @@ public class Author{
     private String authorPic;
     private String githubLink;
     private String linkedInLink;
-    private Long totalBlogs=0L;
-    private Long totalViews=0L;
-    private Long followers=0L;
-    private Long following=0L;
+
+    @Column(nullable = false, columnDefinition = "bigint default 0")
+    private Long totalBlogs = 0L;
+
+    @Column(nullable = false, columnDefinition = "bigint default 0")
+    private Long totalViews = 0L;
+
+    @Column(nullable = false, columnDefinition = "bigint default 0")
+    private Long followers = 0L;
+
+    @Column(nullable = false, columnDefinition = "bigint default 0")
+    private Long following = 0L;
+
 
     @Column(length = 200)
     private String website;
@@ -68,26 +77,18 @@ public class Author{
     private List<Post> posts=new ArrayList<>();
 
     @Builder
-    public Author(String userName, String email, String password, String bio,String authorPic,
-                  String githubLink,String linkedInLink,Long totalBlogs, Long totalViews, Long followers, Long following,String website) {
+    public Author(String userName, String email, String password, String bio, String website) {
         this.userName = userName;
         this.email = email;
         this.password = password;
         this.bio = bio;
-        this.authorPic=authorPic;
-        this.githubLink=githubLink;
-        this.linkedInLink=linkedInLink;
-        this.totalBlogs=totalBlogs;
-        this.totalViews=totalViews;
-        this.followers=followers;
-        this.following=following;
         this.website = website;
-        this.comments=new ArrayList<>();
+        this.totalBlogs = 0L;
+        this.totalViews = 0L;
+        this.followers = 0L;
+        this.following = 0L;
+        this.comments = new ArrayList<>();
         this.posts = new ArrayList<>();
     }
-    public void incrementBlogCount(){totalBlogs++;}
-    public void incrementTotalFollowers(){followers++;}
-    public void incrementTotalFollowing(){following++;}
-
 
 }

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import Dashboard from "./components/Dashboard/Dashboard";
-import AuthLayout from "./components/Auth/AuthLayout";
 import { getUserFromToken, removeToken, isAuthenticated } from "./Utils/auth";
 import { ToastProvider } from "./Contexts/ToastContext";
 import Navbar2 from "./components/Dashboard/Navbar2";
@@ -13,6 +12,8 @@ import Blogs2 from "./Pages/Blogs2";
 import Contact from "./Pages/Contact";
 import Profile from "./Pages/Profile";
 import AuthModal from "./components/AuthModal";
+import BlogDetails from "./Pages/BlogDetails";
+import Authors from "./Pages/Authors";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -68,12 +69,26 @@ const App = () => {
           <Route path="/home" element={<Home />} />
           <Route path="/services" element={<Services />} />
           <Route path="/about" element={<About />} />
+          <Route path="/authors" element={<Authors />} />
+
+          {/* <Route
+            path="/authors/:id"
+            element={
+              isLoggedIn ? <Details /> : <Navigate to="/blogs" replace />
+            }
+          /> */}
 
           {/* Blogs - accessible to all, but some features require login */}
           <Route
             path="/blogs"
             element={
               <Blogs2 openAuthModal={openAuthModal} isLoggedIn={isLoggedIn} />
+            }
+          />
+          <Route
+            path="/blogs/:id"
+            element={
+              isLoggedIn ? <BlogDetails /> : <Navigate to="/blogs" replace />
             }
           />
 

@@ -39,15 +39,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 
         if (path.startsWith("/api/v1/auth/")
-                || (request.getMethod().equals("GET") && path.startsWith("/api/v1/posts") && !path.startsWith("/api/v1/posts/my-posts"))
-                || (request.getMethod().equals("GET") && path.startsWith("/api/v1/categories"))
-                || (request.getMethod().equals("GET") && path.startsWith("/api/v1/authors") && !path.startsWith("/api/v1/authors/loggedIn-user"))) {
-            System.out.println("Path get skips is :"+path);
+                || request.getMethod().equals("GET") && path.equals("/api/v1/authors")
+                ||(request.getMethod().equals("GET") && path.equals("api/v1/posts/"))
+                || (request.getMethod().equals("GET") && path.startsWith("/api/v1/categories"))) {
+            System.out.println("Path get skips is :" + path);
             filterChain.doFilter(request, response);
             System.out.println("Skipping JWT validation for public endpoint");
             return;
         }
-
         try {
             String jwt = jwtTokenProvider.getJwtFromHeader(request);
             System.out.println("JWT Token: " + (jwt != null ? "Present" : "Null"));

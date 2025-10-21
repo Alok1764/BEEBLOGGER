@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,4 +35,14 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
 
     @Query("SELECT a.id FROM Author a WHERE a.email=:email")
     Long findByEmail(@Param("email") String email);
+
+    @Modifying
+    @Query("UPDATE Author a SET a.totalViews=a.totalViews+1 WHERE a.id=:id")
+    void IncrementAuthorTotalViews(@Param("id") Long id);
+
+    @Modifying
+    @Query("UPDATE Author a SET a.totalBlogs=a.totalBlogs+1 WHERE a.id=:id")
+    void IncrementAuthorTotalBlogs(@Param("id") Long id);
+
+    List<Author> findTop5ByOrderByTotalViewsDesc();
 }
