@@ -4,6 +4,7 @@ import { FaArrowRight } from "react-icons/fa6";
 
 const SideBar2 = () => {
   const [popularBlogs, setPopularBlogs] = useState([]);
+  const [latestBlogs, setLatestBlogs] = useState([]);
 
   useEffect(() => {
     async function fetchPopularBlogs() {
@@ -12,12 +13,27 @@ const SideBar2 = () => {
 
         if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
         const data = await res.json();
-        setPopularBlogs(data.slice(0, 15));
+        setPopularBlogs(data.slice(0, 5));
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
     }
     fetchPopularBlogs();
+  }, []);
+
+  useEffect(() => {
+    async function fetchLatestBlogs() {
+      try {
+        const res = await fetch("http://localhost:8080/api/v1/posts/recent");
+
+        if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+        const data = await res.json();
+        setLatestBlogs(data.slice(0, 5));
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    }
+    fetchLatestBlogs();
   }, []);
 
   return (

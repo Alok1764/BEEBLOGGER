@@ -14,6 +14,7 @@ import Profile from "./Pages/Profile";
 import AuthModal from "./components/AuthModal";
 import BlogDetails from "./Pages/BlogDetails";
 import Authors from "./Pages/Authors";
+import AuthorDetails from "./Pages/AuthorDetails";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -69,14 +70,25 @@ const App = () => {
           <Route path="/home" element={<Home />} />
           <Route path="/services" element={<Services />} />
           <Route path="/about" element={<About />} />
-          <Route path="/authors" element={<Authors />} />
 
-          {/* <Route
+          <Route
+            path="/authors"
+            element={
+              <Authors openAuthModal={openAuthModal} isLoggedIn={isLoggedIn} />
+            }
+          />
+
+          {/* Too view specific author profiles are required login */}
+          <Route
             path="/authors/:id"
             element={
-              isLoggedIn ? <Details /> : <Navigate to="/blogs" replace />
+              isLoggedIn ? (
+                <AuthorDetails />
+              ) : (
+                <Navigate to="/authors" replace />
+              )
             }
-          /> */}
+          />
 
           {/* Blogs - accessible to all, but some features require login */}
           <Route

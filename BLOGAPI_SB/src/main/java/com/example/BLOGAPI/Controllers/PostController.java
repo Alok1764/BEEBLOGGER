@@ -81,14 +81,22 @@ public class PostController {
     }
 
     @GetMapping("/my-posts")
-    public ResponseEntity<Page<PostDTO>> getPostsByAuthor(
+    public ResponseEntity<Page<PostDTO>> getPostsByLoggedInAuthor(
             Authentication authentication,
             @RequestParam(defaultValue = "0") int pageNo,
             @RequestParam(defaultValue = "12") int pageSize) {
 
         logger.info("GET /api/posts/my-posts/ - page: {}, size: {}", pageNo, pageSize);
-        return ResponseEntity.ok(postService.getPostsByAuthor(authentication,PageRequest.of(pageNo,pageSize)));
+        return ResponseEntity.ok(postService.getPostsByLoggedInAuthor(authentication,PageRequest.of(pageNo,pageSize)));
     }
+    @GetMapping("/authors/{id}")
+    public ResponseEntity<Page<PostDTO>> getPostsByAuthor(@PathVariable Long id,
+                                                         @RequestParam(defaultValue = "0") int pageNo,
+                                                         @RequestParam(defaultValue = "12") int pageSize){
+        logger.info("GET /api/posts/authors/{id} - id :{},page: {}, size: {}",id,pageNo,pageSize);
+        return ResponseEntity.ok(postService.getPostsByAuthor(id,PageRequest.of(pageNo,pageSize)));
+    }
+
 
     @GetMapping("/recent")
     public ResponseEntity<List<PostDTO>> getRecentPosts(

@@ -14,7 +14,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -47,13 +49,18 @@ public class PostServiceImpl {
     return postsPage.map(post -> modelMapper.map(post, PostDTO.class));
   }
 
-    public Page<PostDTO> getPostsByAuthor(Authentication authentication, Pageable pageable) {
+    public Page<PostDTO> getPostsByLoggedInAuthor(Authentication authentication, Pageable pageable) {
         String username = authentication.getName();
         Author author = authorRepository.findByUserName(username)
                 .orElseThrow(() -> new ResourceNotFoundException("Author not found"));
 
         Page<Post> postsPage = postRepository.findByAuthorId(author.getId(),pageable);
         return postsPage.map(post-> modelMapper.map(post,PostDTO.class));
+    }
+    public Page<PostDTO> getPostsByAuthor(Long id,Pageable pageable) {
+      Page<Post> postPage =postRepository.findByAuthorId(id,pageable);
+      return postPage.map(post -> modelMapper.map(post,PostDTO.class));
+
     }
 
     // here instead to update the whole table and its updating every time on called so I have used update query
@@ -182,4 +189,6 @@ public Page<PostDTO> getPostsByCategory(List<Long> categoryIds, Pageable pageabl
         post.setImage(url);
         postRepository.save(post);
     }
+
+
 }

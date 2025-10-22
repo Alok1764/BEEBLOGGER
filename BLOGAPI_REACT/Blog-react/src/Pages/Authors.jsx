@@ -3,7 +3,7 @@ import AuthorCardHorizontal from "../components/AuthorCardHorizontal";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaSearch, FaEye, FaFileAlt } from "react-icons/fa";
 
-const Authors = () => {
+const Authors = ({ openAuthModal, isLoggedIn }) => {
   const navigate = useNavigate();
   const [topAuthors, setTopAuthors] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
@@ -56,8 +56,13 @@ const Authors = () => {
     }
   };
 
-  const handleAuthorClick = (authorId) => {
-    navigate(`/authors/${authorId}`);
+  const handleAuthorClick = (e, authorId) => {
+    e.preventDefault();
+    if (!isLoggedIn) {
+      openAuthModal();
+    } else {
+      navigate(`/authors/${authorId}`);
+    }
   };
 
   if (loading) {
@@ -114,7 +119,7 @@ const Authors = () => {
                     <AuthorCardHorizontal
                       key={author.id}
                       author={author}
-                      onClick={() => handleAuthorClick(author.id)}
+                      onClick={(e) => handleAuthorClick(e, author.id)}
                     />
                   ))}
                 </div>
@@ -138,7 +143,7 @@ const Authors = () => {
                   key={author.id}
                   author={author}
                   rank={index + 1}
-                  onClick={() => handleAuthorClick(author.id)}
+                  onClick={(e) => handleAuthorClick(e, author.id)}
                 />
               ))}
             </div>

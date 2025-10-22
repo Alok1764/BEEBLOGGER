@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaUser, FaGithub, FaLinkedin, FaGlobe, FaEdit } from "react-icons/fa";
+import {
+  FaUser,
+  FaGithub,
+  FaLinkedin,
+  FaGlobe,
+  FaEdit,
+  FaFileAlt,
+  FaEye,
+  FaUserFriends,
+} from "react-icons/fa";
 import Navbar2 from "../components/Dashboard/Navbar2";
 const Profile = () => {
   const [profileData, setProfileData] = useState(null);
@@ -264,41 +273,47 @@ const Profile = () => {
               </div>
             </div>
           </div>
-
           {/* Right Side - Stats & Blogs */}
           <div className="lg:col-span-8">
-            {/* Stats */}
-            <div className="grid grid-cols-4 gap-px bg-orange-500 mb-12">
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-orange-500 mb-12">
               <div className="bg-white p-8 text-center">
+                <FaFileAlt className="w-8 h-8 text-orange-500 mx-auto mb-3" />
                 <div className="text-4xl font-bold font-mono tracking-tighter text-orange-500 mb-2">
                   {profileData.totalBlogs || 0}
                 </div>
                 <div className="font-mono text-xs tracking-widest text-orange-500 opacity-70">
-                  TOTAL BLOGS
+                  POSTS
                 </div>
               </div>
+
               <div className="bg-white p-8 text-center">
+                <FaEye className="w-8 h-8 text-orange-500 mx-auto mb-3" />
                 <div className="text-4xl font-bold font-mono tracking-tighter text-orange-500 mb-2">
-                  {profileData.totalViews}
+                  {profileData.totalViews || 0}
                 </div>
                 <div className="font-mono text-xs tracking-widest text-orange-500 opacity-70">
-                  TOTAL VIEWS
+                  VIEWS
                 </div>
               </div>
+
               <div className="bg-white p-8 text-center">
+                <FaUserFriends className="w-8 h-8 text-orange-500 mx-auto mb-3" />
                 <div className="text-4xl font-bold font-mono tracking-tighter text-orange-500 mb-2">
-                  0
+                  {profileData.followers || 0}
                 </div>
                 <div className="font-mono text-xs tracking-widest text-orange-500 opacity-70">
                   FOLLOWERS
                 </div>
               </div>
+
               <div className="bg-white p-8 text-center">
+                <FaUserFriends className="w-8 h-8 text-orange-500 mx-auto mb-3" />
                 <div className="text-4xl font-bold font-mono tracking-tighter text-orange-500 mb-2">
-                  0
+                  {profileData.following || 0}
                 </div>
                 <div className="font-mono text-xs tracking-widest text-orange-500 opacity-70">
-                  FOLLOWINGS
+                  FOLLOWING
                 </div>
               </div>
             </div>
@@ -347,6 +362,7 @@ const Profile = () => {
                           <span>
                             {new Date(blog.createdAt).toLocaleDateString()}
                           </span>
+                          <span>VIEWS {blog.viewCount}</span>
                         </div>
                       </Link>
                     ))}
