@@ -42,7 +42,7 @@ public class WebSecurityConfig {
 
                                 .requestMatchers(HttpMethod.GET, "/authors/search/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/authors/popular/**").permitAll()
-                                .requestMatchers("/authors/loggedIn-user").authenticated()
+                                .requestMatchers("/authors/loggedIn-user","/authors/*/update-profile").authenticated()
                                 .requestMatchers("/authors/*").authenticated()
                         .requestMatchers(HttpMethod.GET, "/authors/**").permitAll()
 

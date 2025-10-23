@@ -45,4 +45,5 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
     void IncrementAuthorTotalBlogs(@Param("id") Long id);
 
     List<Author> findTop5ByOrderByTotalViewsDesc();
+
 }

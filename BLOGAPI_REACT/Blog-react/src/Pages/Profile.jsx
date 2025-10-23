@@ -9,8 +9,10 @@ import {
   FaFileAlt,
   FaEye,
   FaUserFriends,
+  FaSave,
+  FaTimes,
 } from "react-icons/fa";
-import Navbar2 from "../components/Dashboard/Navbar2";
+
 const Profile = () => {
   const [profileData, setProfileData] = useState(null);
   const [blogs, setBlogs] = useState([]);
@@ -18,6 +20,19 @@ const Profile = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Form state for editing
+  const [editForm, setEditForm] = useState({
+    bio: "",
+    githubLink: "",
+    linkedInLink: "",
+    website: "",
+    authorPic: "",
+  });
+
+  // For image upload preview
+  const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
     fetchProfileData();
@@ -26,6 +41,14 @@ const Profile = () => {
   useEffect(() => {
     if (profileData) {
       fetchMyBlogs();
+      // Initialize form with current data when profile loads
+      setEditForm({
+        bio: profileData.bio || "",
+        githubLink: profileData.githubLink || "",
+        linkedInLink: profileData.linkedInLink || "",
+        website: profileData.website || "",
+        authorPic: profileData.authorPic || "",
+      });
     }
   }, [currentPage, profileData]);
 
@@ -82,6 +105,97 @@ const Profile = () => {
     }
   };
 
+  // Handle form input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handle image upload
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+        setEditForm((prev) => ({
+          ...prev,
+          authorPic: reader.result, // Base64 string or upload to server first
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Save profile changes using PATCH
+  const handleSaveChanges = async () => {
+    setIsSaving(true);
+    try {
+      const tokenString = localStorage.getItem("jwtToken");
+      const tokenObj = JSON.parse(tokenString);
+      const token = tokenObj.jwtToken;
+
+      // Only send fields that have values (PATCH behavior)
+      const updateData = {};
+
+      // Add fields only if they exist
+      if (editForm.bio !== undefined && editForm.bio !== null) {
+        updateData.bio = editForm.bio;
+      }
+      if (editForm.githubLink) updateData.githubLink = editForm.githubLink;
+      if (editForm.linkedInLink)
+        updateData.linkedInLink = editForm.linkedInLink;
+      if (editForm.website) updateData.website = editForm.website;
+      if (editForm.authorPic) updateData.authorPic = editForm.authorPic;
+      console.log(updateData);
+      const res = await fetch(
+        `http://localhost:8080/api/v1/authors/${profileData.id}/update-profile`,
+        {
+          method: "PATCH", // Using PATCH for partial updates
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updateData),
+        }
+      );
+
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+
+      const updatedData = await res.json();
+
+      // Update local state with new data
+      setProfileData(updatedData);
+      setIsEditMode(false);
+      setImagePreview(null);
+
+      alert("Profile updated successfully!");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      alert("Failed to update profile. Please try again.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Cancel editing
+  const handleCancelEdit = () => {
+    setIsEditMode(false);
+    setImagePreview(null);
+    // Reset form to original profile data
+    setEditForm({
+      bio: profileData.bio || "",
+      githubLink: profileData.githubLink || "",
+      linkedInLink: profileData.linkedInLink || "",
+      website: profileData.website || "",
+      authorPic: profileData.authorPic || "",
+    });
+  };
+
   if (loading) {
     return (
       <div className="bg-white min-h-screen pt-32 flex items-center justify-center">
@@ -93,19 +207,41 @@ const Profile = () => {
   return (
     <div className="bg-white min-h-screen pt-32">
       <div className="max-w-7xl mx-auto px-12 py-12">
-        <Navbar2 />
         {/* Header with Edit Button */}
         <div className="flex justify-between items-center mb-12 pb-6 border-b border-orange-500">
           <h1 className="text-5xl font-bold font-mono tracking-tighter text-orange-500">
             PROFILE
           </h1>
-          <button
-            onClick={() => setIsEditMode(!isEditMode)}
-            className="flex items-center gap-3 px-8 py-3 border border-orange-500 text-orange-500 font-mono text-sm tracking-widest hover:bg-orange-500 hover:text-white transition-all"
-          >
-            <FaEdit />
-            {isEditMode ? "CANCEL" : "EDIT PROFILE"}
-          </button>
+          <div className="flex gap-3">
+            {isEditMode ? (
+              <>
+                <button
+                  onClick={handleCancelEdit}
+                  disabled={isSaving}
+                  className="flex items-center gap-3 px-8 py-3 border border-red-500 text-red-500 font-mono text-sm tracking-widest hover:bg-red-500 hover:text-white transition-all disabled:opacity-50"
+                >
+                  <FaTimes />
+                  CANCEL
+                </button>
+                <button
+                  onClick={handleSaveChanges}
+                  disabled={isSaving}
+                  className="flex items-center gap-3 px-8 py-3 bg-orange-500 text-white font-mono text-sm tracking-widest hover:bg-orange-600 transition-all disabled:opacity-50"
+                >
+                  <FaSave />
+                  {isSaving ? "SAVING..." : "SAVE CHANGES"}
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => setIsEditMode(true)}
+                className="flex items-center gap-3 px-8 py-3 border border-orange-500 text-orange-500 font-mono text-sm tracking-widest hover:bg-orange-500 hover:text-white transition-all"
+              >
+                <FaEdit />
+                EDIT PROFILE
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Main Content Grid */}
@@ -115,8 +251,14 @@ const Profile = () => {
             <div className="border border-orange-500 p-8">
               {/* Profile Picture */}
               <div className="mb-8">
-                <div className="w-full aspect-square bg-orange-500 flex items-center justify-center mb-4">
-                  {profileData.authorPic ? (
+                <div className="w-full aspect-square bg-orange-500 flex items-center justify-center mb-4 overflow-hidden">
+                  {imagePreview ? (
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : profileData.authorPic ? (
                     <img
                       src={profileData.authorPic}
                       alt={profileData.userName}
@@ -127,9 +269,17 @@ const Profile = () => {
                   )}
                 </div>
                 {isEditMode && (
-                  <button className="w-full py-3 border border-orange-500 text-orange-500 font-mono text-xs tracking-widest hover:bg-orange-500 hover:text-white transition-all">
-                    UPLOAD IMAGE
-                  </button>
+                  <label className="block">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                    />
+                    <div className="w-full py-3 border border-orange-500 text-orange-500 font-mono text-xs tracking-widest hover:bg-orange-500 hover:text-white transition-all cursor-pointer text-center">
+                      UPLOAD IMAGE
+                    </div>
+                  </label>
                 )}
               </div>
 
@@ -150,9 +300,11 @@ const Profile = () => {
                 </h3>
                 {isEditMode ? (
                   <textarea
-                    className="w-full p-3 border border-orange-500 font-mono text-sm text-orange-500 bg-white focus:outline-none"
+                    name="bio"
+                    value={editForm.bio}
+                    onChange={handleInputChange}
+                    className="w-full p-3 border border-orange-500 font-mono text-sm text-orange-500 bg-white focus:outline-none focus:ring-2 focus:ring-orange-300"
                     rows="4"
-                    defaultValue={profileData.bio || ""}
                     placeholder="ADD YOUR BIO..."
                   />
                 ) : (
@@ -171,12 +323,14 @@ const Profile = () => {
                   {/* GitHub */}
                   {isEditMode ? (
                     <div className="flex items-center gap-3">
-                      <FaGithub className="w-5 h-5 text-orange-500" />
+                      <FaGithub className="w-5 h-5 text-orange-500 flex-shrink-0" />
                       <input
                         type="text"
-                        className="flex-1 p-2 border border-orange-500 font-mono text-xs text-orange-500 bg-white focus:outline-none"
-                        placeholder="GITHUB URL"
-                        defaultValue={profileData.githubLink || ""}
+                        name="githubLink"
+                        value={editForm.githubLink}
+                        onChange={handleInputChange}
+                        className="flex-1 p-2 border border-orange-500 font-mono text-xs text-orange-500 bg-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                        placeholder="https://github.com/username"
                       />
                     </div>
                   ) : profileData.githubLink ? (
@@ -195,7 +349,7 @@ const Profile = () => {
                     <div className="flex items-center gap-3 text-orange-500 opacity-30">
                       <FaGithub className="w-5 h-5" />
                       <span className="font-mono text-xs tracking-wider">
-                        ADD GITHUB
+                        NO GITHUB LINK
                       </span>
                     </div>
                   )}
@@ -203,12 +357,14 @@ const Profile = () => {
                   {/* LinkedIn */}
                   {isEditMode ? (
                     <div className="flex items-center gap-3">
-                      <FaLinkedin className="w-5 h-5 text-orange-500" />
+                      <FaLinkedin className="w-5 h-5 text-orange-500 flex-shrink-0" />
                       <input
                         type="text"
-                        className="flex-1 p-2 border border-orange-500 font-mono text-xs text-orange-500 bg-white focus:outline-none"
-                        placeholder="LINKEDIN URL"
-                        defaultValue={profileData.linkedInLink || ""}
+                        name="linkedInLink"
+                        value={editForm.linkedInLink}
+                        onChange={handleInputChange}
+                        className="flex-1 p-2 border border-orange-500 font-mono text-xs text-orange-500 bg-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                        placeholder="https://linkedin.com/in/username"
                       />
                     </div>
                   ) : profileData.linkedInLink ? (
@@ -227,7 +383,7 @@ const Profile = () => {
                     <div className="flex items-center gap-3 text-orange-500 opacity-30">
                       <FaLinkedin className="w-5 h-5" />
                       <span className="font-mono text-xs tracking-wider">
-                        ADD LINKEDIN
+                        NO LINKEDIN LINK
                       </span>
                     </div>
                   )}
@@ -235,12 +391,14 @@ const Profile = () => {
                   {/* Website */}
                   {isEditMode ? (
                     <div className="flex items-center gap-3">
-                      <FaGlobe className="w-5 h-5 text-orange-500" />
+                      <FaGlobe className="w-5 h-5 text-orange-500 flex-shrink-0" />
                       <input
                         type="text"
-                        className="flex-1 p-2 border border-orange-500 font-mono text-xs text-orange-500 bg-white focus:outline-none"
-                        placeholder="WEBSITE URL"
-                        defaultValue={profileData.website || ""}
+                        name="website"
+                        value={editForm.website}
+                        onChange={handleInputChange}
+                        className="flex-1 p-2 border border-orange-500 font-mono text-xs text-orange-500 bg-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                        placeholder="https://yourwebsite.com"
                       />
                     </div>
                   ) : profileData.website ? (
@@ -259,20 +417,15 @@ const Profile = () => {
                     <div className="flex items-center gap-3 text-orange-500 opacity-30">
                       <FaGlobe className="w-5 h-5" />
                       <span className="font-mono text-xs tracking-wider">
-                        ADD WEBSITE
+                        NO WEBSITE
                       </span>
                     </div>
                   )}
                 </div>
-
-                {isEditMode && (
-                  <button className="w-full mt-6 py-3 bg-orange-500 text-white font-mono text-sm tracking-widest hover:bg-white hover:text-orange-500 border border-orange-500 transition-all">
-                    SAVE CHANGES
-                  </button>
-                )}
               </div>
             </div>
           </div>
+
           {/* Right Side - Stats & Blogs */}
           <div className="lg:col-span-8">
             {/* Stats Grid */}
@@ -332,12 +485,12 @@ const Profile = () => {
                 </div>
               ) : (
                 <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-px ">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-px">
                     {blogs.map((blog) => (
                       <Link
                         key={blog.id}
                         to={`/blogs/${blog.id}`}
-                        className="bg-white p-6 hover:bg-orange-500 hover:text-white transition-all group border-orange-500"
+                        className="bg-white p-6 hover:bg-orange-500 hover:text-white transition-all group border border-orange-500"
                       >
                         <div className="mb-4">
                           {blog.image && (

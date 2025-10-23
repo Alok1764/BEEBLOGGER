@@ -1,7 +1,9 @@
 package com.example.BLOGAPI.Controllers;
 
+import com.example.BLOGAPI.DTOs.request.AuthorProfileDTO;
 import com.example.BLOGAPI.DTOs.response.AuthorDTO;
 import com.example.BLOGAPI.Services.ServicesImpl.AuthorServiceImpl;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,20 +61,26 @@ public class AuthorController {
         return ResponseEntity.ok(authorService.getAuthorByUserName(userName));
     }
 
-
-    @PatchMapping("/{id}/update_password")
+    @PatchMapping("{id}/update-profile")
     @PreAuthorize("@authorSecurityService.isAuthorOwner(#id)")
-    void updateAuthorPass(@PathVariable Long id,@RequestParam String password ){
-     logger.info("PATCH /api/authors/{}/password",id);
-            authorService.updateAuthorPassword(id,password);
+    ResponseEntity<AuthorDTO>updateAuthorProfile(@PathVariable Long id,@Valid @RequestBody AuthorProfileDTO authorProfileDTO){
+     logger.info("PATCH /api/authors/update-profile");
+        return ResponseEntity.ok(authorService.updateAuthorProfile(id,authorProfileDTO));
     }
 
-    @PatchMapping("/{id}/update_email")
-    @PreAuthorize("@authorSecurityService.isAuthorOwner(#id)")
-    ResponseEntity<AuthorDTO> updateAuthorEmail(@PathVariable Long id,@RequestParam String email){
-        logger.info("PATCH /api/authors/{}/email",id);
-        return ResponseEntity.ok(authorService.updateAuthorEmail(id,email));
-    }
+//    @PatchMapping("/{id}/update_password")
+//    @PreAuthorize("@authorSecurityService.isAuthorOwner(#id)")
+//    void updateAuthorPass(@PathVariable Long id,@RequestParam String password ){
+//     logger.info("PATCH /api/authors/{}/password",id);
+//            authorService.updateAuthorPassword(id,password);
+//    }
+
+//    @PatchMapping("/{id}/update_email")
+//    @PreAuthorize("@authorSecurityService.isAuthorOwner(#id)")
+//    ResponseEntity<AuthorDTO> updateAuthorEmail(@PathVariable Long id,@RequestParam String email){
+//        logger.info("PATCH /api/authors/{}/email",id);
+//        return ResponseEntity.ok(authorService.updateAuthorEmail(id,email));
+//    }
 
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("@authorSecurityService.isAuthorOwner(#id)")

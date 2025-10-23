@@ -20,7 +20,7 @@ const AuthorCardHorizontal = ({ author, rank, onClick }) => {
         {author.authorPic ? (
           <img
             src={author.authorPic}
-            alt={author.userName}
+            alt={""}
             className="w-full h-full object-cover"
           />
         ) : (
@@ -34,7 +34,7 @@ const AuthorCardHorizontal = ({ author, rank, onClick }) => {
           {author.userName.toUpperCase()}
         </h3>
         {author.bio && (
-          <p className="text-sm font-mono tracking-wider opacity-70 truncate">
+          <p className="text-sm font-mono tracking-wider opacity-80 truncate">
             {author.bio}
           </p>
         )}
