@@ -15,6 +15,8 @@ import AuthModal from "./components/AuthModal";
 import BlogDetails from "./Pages/BlogDetails";
 import Authors from "./Pages/Authors";
 import AuthorDetails from "./Pages/AuthorDetails";
+import BlogPostEditor from "./Pages/BlogPostEditor";
+import MyPosts from "./Pages/MyPosts";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -71,6 +73,9 @@ const App = () => {
           <Route path="/services" element={<Services />} />
           <Route path="/about" element={<About />} />
 
+          <Route path="/editor" element={<BlogPostEditor />} />
+          <Route path="/editor/:id" element={<BlogPostEditor />} />
+          <Route path="/my-posts" element={<MyPosts />} />
           <Route
             path="/authors"
             element={
@@ -82,7 +87,7 @@ const App = () => {
           <Route
             path="/authors/:id"
             element={
-              isLoggedIn ? (
+              isAuthenticated() ? (
                 <AuthorDetails />
               ) : (
                 <Navigate to="/authors" replace />
@@ -100,7 +105,11 @@ const App = () => {
           <Route
             path="/blogs/:id"
             element={
-              isLoggedIn ? <BlogDetails /> : <Navigate to="/blogs" replace />
+              isAuthenticated() ? (
+                <BlogDetails />
+              ) : (
+                <Navigate to="/blogs" replace />
+              )
             }
           />
 
@@ -109,7 +118,9 @@ const App = () => {
           {/* Protected Route - Profile */}
           <Route
             path="/profile"
-            element={isLoggedIn ? <Profile /> : <Navigate to="/home" replace />}
+            element={
+              isAuthenticated() ? <Profile /> : <Navigate to="/home" replace />
+            }
           />
 
           {/* Protected Route - Dashboard */}

@@ -98,7 +98,7 @@ const Profile = () => {
 
       if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
       const data = await res.json();
-      setBlogs(data.content);
+      setBlogs(data.content.filter((blog) => blog.status === "PUBLISHED"));
       setTotalPages(data.totalPages);
     } catch (error) {
       console.error("Error fetching blogs:", error);
@@ -505,13 +505,10 @@ const Profile = () => {
                           {blog.title}
                         </h4>
                         <div className="flex items-center justify-between text-xs font-mono tracking-widest opacity-70">
-                          <span
-                            className={
-                              blog.published ? "text-green-500" : "text-red-500"
-                            }
-                          >
-                            {blog.published ? "PUBLISHED" : "DRAFT"}
+                          <span className=" hover:text-white  text-orange-500">
+                            PUBLISHED
                           </span>
+
                           <span>
                             {new Date(blog.createdAt).toLocaleDateString()}
                           </span>

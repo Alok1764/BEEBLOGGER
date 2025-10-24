@@ -1,6 +1,7 @@
 package com.example.BLOGAPI.Controllers;
 
 import com.example.BLOGAPI.DTOs.request.PostCreatedDTO;
+import com.example.BLOGAPI.DTOs.response.PageResponse;
 import com.example.BLOGAPI.DTOs.response.PostDTO;
 import com.example.BLOGAPI.Entities.Author;
 import com.example.BLOGAPI.Enums.PostStatus;
@@ -34,9 +35,8 @@ public class PostController {
 
     //updated this and imporve the query time avoiding N+1 problem
     //map both all post and categories together
-
     @GetMapping
-    public ResponseEntity<Page<PostDTO>> getPosts(
+    public PageResponse<PostDTO> getPosts(
             @RequestParam(required = false) List<Long> categoryIds,
             @RequestParam(defaultValue = "0") int pageNo,
             @RequestParam(defaultValue = "12") int pageSize,
@@ -49,10 +49,10 @@ public class PostController {
         Sort sort = sortOrder.equalsIgnoreCase("ASC") ? Sort.by(sortedBy).ascending() : Sort.by(sortedBy).descending();
 
         if (categoryIds != null && !categoryIds.isEmpty()) {
-            return ResponseEntity.ok(postService.getPostsByCategory(categoryIds, PageRequest.of(pageNo, pageSize, sort)));
+            return new PageResponse<>(postService.getPostsByCategory(categoryIds, PageRequest.of(pageNo, pageSize, sort)));
         }
 
-        return ResponseEntity.ok(postService.getAllPosts(PageRequest.of(pageNo, pageSize, sort)));
+        return new PageResponse<>(postService.getAllPosts(PageRequest.of(pageNo, pageSize, sort)));
     }
 
 
@@ -81,20 +81,20 @@ public class PostController {
     }
 
     @GetMapping("/my-posts")
-    public ResponseEntity<Page<PostDTO>> getPostsByLoggedInAuthor(
+    public PageResponse<PostDTO> getPostsByLoggedInAuthor(
             Authentication authentication,
             @RequestParam(defaultValue = "0") int pageNo,
             @RequestParam(defaultValue = "12") int pageSize) {
 
         logger.info("GET /api/posts/my-posts/ - page: {}, size: {}", pageNo, pageSize);
-        return ResponseEntity.ok(postService.getPostsByLoggedInAuthor(authentication,PageRequest.of(pageNo,pageSize)));
+        return new PageResponse<>(postService.getPostsByLoggedInAuthor(authentication,PageRequest.of(pageNo,pageSize)));
     }
     @GetMapping("/authors/{id}")
-    public ResponseEntity<Page<PostDTO>> getPostsByAuthor(@PathVariable Long id,
+    public PageResponse<PostDTO> getPostsByAuthor(@PathVariable Long id,
                                                          @RequestParam(defaultValue = "0") int pageNo,
                                                          @RequestParam(defaultValue = "12") int pageSize){
         logger.info("GET /api/posts/authors/{id} - id :{},page: {}, size: {}",id,pageNo,pageSize);
-        return ResponseEntity.ok(postService.getPostsByAuthor(id,PageRequest.of(pageNo,pageSize)));
+        return new PageResponse<>(postService.getPostsByAuthor(id,PageRequest.of(pageNo,pageSize)));
     }
 
 

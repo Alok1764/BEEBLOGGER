@@ -2,6 +2,7 @@ package com.example.BLOGAPI.DTOs.response;
 
 import com.example.BLOGAPI.Entities.Author;
 import com.example.BLOGAPI.Entities.Category;
+import com.example.BLOGAPI.Enums.PostStatus;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ public class PostDTO {
     private String title;
     private String image;
     private String slug;
+    private PostStatus status;
     private AuthorDTO authorDTO;
     private String excerpt;
     private String content;

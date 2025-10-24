@@ -44,7 +44,7 @@ public class PostServiceImpl {
 //    }
 
   public Page<PostDTO> getAllPosts(Pageable pageable) {
-    Page<Post> postsPage = postRepository.findAll(pageable);
+    Page<Post> postsPage = postRepository.findByStatus(PostStatus.PUBLISHED,pageable);
 
     return postsPage.map(post -> modelMapper.map(post, PostDTO.class));
   }
@@ -101,7 +101,6 @@ public class PostServiceImpl {
 
 public Page<PostDTO> getPostsByCategory(List<Long> categoryIds, Pageable pageable) {
     Page<Post> postsPage = postRepository.findByCategoryIds(categoryIds, pageable);
-
     return postsPage.map(post -> modelMapper.map(post, PostDTO.class));
 }
 
@@ -135,7 +134,7 @@ public Page<PostDTO> getPostsByCategory(List<Long> categoryIds, Pageable pageabl
                 .categories(categories)
                 .build();
 
-
+        postRepository.save(post);
         return modelMapper.map(post,PostDTO.class);
     }
 
