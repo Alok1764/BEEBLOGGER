@@ -68,7 +68,7 @@ const Navbar2 = ({ onLogout, isLoggedIn, onLoginClick }) => {
             <div>
               <NavLink
                 to="/home"
-                className="text-2xl font-bold font-mono tracking-tighter text-orange-500"
+                className="text-2xl font-bold font-mono tracking-tighter text-orange-500 mr-2"
               >
                 BEEBLOGGER
               </NavLink>

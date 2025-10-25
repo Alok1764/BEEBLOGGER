@@ -46,7 +46,6 @@ public class CategoryServiceImpl {
     public CategoryDTO createCategory(CategoryCreatedDTO categoryCreatedDTO) {
         Category category=Category.builder()
                 .name(categoryCreatedDTO.getName())
-                .slug(categoryCreatedDTO.getSlug())
                 .build();
 
         Category newCategory=categoryRepository.save(category);
@@ -59,7 +58,6 @@ public class CategoryServiceImpl {
 
            Category updatedCategory=Category.builder()
                 .name(categoryCreatedDTO.getName())
-                .slug(categoryCreatedDTO.getSlug())
                 .build();
 
         Category newCategory=categoryRepository.save(updatedCategory);

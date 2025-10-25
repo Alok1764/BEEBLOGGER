@@ -14,8 +14,8 @@ public class CategoryCreatedDTO {
     @Size(max = 50, message = "Category name must not exceed 50 characters")
     private String name;
 
-    @NotBlank(message = "Category slug is required")
-    @Size(max = 50, message = "Category slug must not exceed 50 characters")
-    private String slug;
+//    @NotBlank(message = "Category slug is required")
+//    @Size(max = 50, message = "Category slug must not exceed 50 characters")
+//    private String slug;
 
 }

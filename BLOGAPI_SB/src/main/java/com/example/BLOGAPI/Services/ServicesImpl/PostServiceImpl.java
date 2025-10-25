@@ -120,9 +120,12 @@ public Page<PostDTO> getPostsByCategory(List<Long> categoryIds, Pageable pageabl
                 .collect(Collectors.toList());
     }
     @Transactional
-    public PostDTO createPost(PostCreatedDTO postCreatedDTO){
-        Author author=authorRepository.findById(postCreatedDTO.getAuthorId())
-                .orElseThrow(()->new ResourceNotFoundException("Author not found with id: "+postCreatedDTO.getAuthorId()));
+    public PostDTO createPost(PostCreatedDTO postCreatedDTO,Authentication authentication){
+
+
+        String username = authentication.getName();
+        Author author = authorRepository.findByUserName(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found"));
         authorRepository.IncrementAuthorTotalBlogs(author.getId());
         Set<Category> categories= new HashSet<>(categoryRepository.findAllById(postCreatedDTO.getCategoryIds()));
 
@@ -138,7 +141,10 @@ public Page<PostDTO> getPostsByCategory(List<Long> categoryIds, Pageable pageabl
         return modelMapper.map(post,PostDTO.class);
     }
 
-    public PostDTO updatePost(Long id,PostCreatedDTO postCreatedDTO) {
+    public PostDTO updatePost(Long id,PostCreatedDTO postCreatedDTO,Authentication authentication) {
+        String username = authentication.getName();
+        Author author = authorRepository.findByUserName(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found"));
             Post post=postRepository.findById(id)
                     .orElseThrow(()->new ResourceNotFoundException("Post not found with id: "+id));
         Set<Category> categories= new HashSet<>(categoryRepository.findAllById(postCreatedDTO.getCategoryIds()));
@@ -148,6 +154,7 @@ public Page<PostDTO> getPostsByCategory(List<Long> categoryIds, Pageable pageabl
                 .excerpt(postCreatedDTO.getExcerpt())
                 .content(postCreatedDTO.getContent())
                 .categories(categories)
+                 .author(author)
                 .build();
         Post savedPost =postRepository.save(updatedpost);
         return modelMapper.map(savedPost,PostDTO.class);

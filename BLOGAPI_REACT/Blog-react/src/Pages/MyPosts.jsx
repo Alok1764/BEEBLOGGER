@@ -127,7 +127,7 @@ const MyPosts = () => {
         {/* Header */}
         <div className="flex justify-between items-center mb-12 pb-6 border-b border-orange-500">
           <div>
-            <h1 className="text-5xl font-bold font-mono tracking-tighter text-orange-500">
+            <h1 className="text-5xl font-bold font-mono tracking-tighter text-orange-500 hover:cursor-pointer">
               MY POSTS
             </h1>
             <p className="text-xs font-mono tracking-widest text-orange-500 opacity-70 mt-2">
@@ -178,7 +178,7 @@ const MyPosts = () => {
         <div className="flex gap-px bg-orange-500 mb-8">
           <button
             onClick={() => setFilter("all")}
-            className={`flex-1 py-4 font-mono text-sm tracking-widest transition-all ${
+            className={`flex-1 py-4 font-mono text-sm tracking-widest transition-all hover:cursor-pointer ${
               filter === "all"
                 ? "bg-orange-500 text-white"
                 : "bg-white text-orange-500 hover:opacity-70"
@@ -188,8 +188,8 @@ const MyPosts = () => {
           </button>
           <button
             onClick={() => setFilter("PUBLISHED")}
-            className={`flex-1 py-4 font-mono text-sm tracking-widest transition-all ${
-              filter === "published"
+            className={`flex-1 py-4 font-mono text-sm tracking-widest transition-all  hover:cursor-pointer ${
+              filter === "PUBLISHED"
                 ? "bg-orange-500 text-white"
                 : "bg-white text-orange-500 hover:opacity-70"
             }`}
@@ -198,8 +198,8 @@ const MyPosts = () => {
           </button>
           <button
             onClick={() => setFilter("DRAFT")}
-            className={`flex-1 py-4 font-mono text-sm tracking-widest transition-all ${
-              filter === "draft"
+            className={`flex-1 py-4 font-mono text-sm tracking-widest transition-all  hover:cursor-pointer ${
+              filter === "DRAFT"
                 ? "bg-orange-500 text-white"
                 : "bg-white text-orange-500 hover:opacity-70"
             }`}
@@ -280,7 +280,7 @@ const MyPosts = () => {
                       {post.status === "PUBLISHED" && (
                         <button
                           onClick={() => navigate(`/blogs/${post.id}`)}
-                          className="px-4 py-2 border border-orange-500 text-orange-500 font-mono text-xs tracking-widest hover:bg-orange-500 hover:text-white transition-all flex items-center gap-2"
+                          className="px-4 py-2 border border-orange-500 text-orange-500 font-mono text-xs tracking-widest hover:bg-orange-500 hover:text-white transition-all flex items-center gap-2 hover:cursor-pointer"
                         >
                           <FaEye />
                           VIEW
@@ -290,7 +290,7 @@ const MyPosts = () => {
                       {/* Edit */}
                       <button
                         onClick={() => navigate(`/editor/${post.id}`)}
-                        className="px-4 py-2 border border-orange-500 text-orange-500 font-mono text-xs tracking-widest hover:bg-orange-500 hover:text-white transition-all flex items-center gap-2"
+                        className="px-4 py-2 border border-orange-500 text-orange-500 font-mono text-xs tracking-widest hover:bg-orange-500 hover:text-white transition-all flex items-center gap-2 hover:cursor-pointer"
                       >
                         <FaEdit />
                         EDIT
@@ -300,7 +300,7 @@ const MyPosts = () => {
                       {post.status === "DRAFT" && (
                         <button
                           onClick={() => handlePublish(post.id)}
-                          className="px-4 py-2  text-orange-500 border border-orange-500 font-mono text-xs tracking-widest hover:bg-orange-500  hover:text-white transition-all"
+                          className="px-4 py-2  text-orange-500 border border-orange-500 font-mono text-xs tracking-widest hover:bg-orange-500  hover:text-white transition-all hover:cursor-pointer"
                         >
                           PUBLISH
                         </button>
@@ -309,7 +309,7 @@ const MyPosts = () => {
                       {/* Delete */}
                       <button
                         onClick={() => handleDelete(post.id, post.title)}
-                        className="px-4 py-2 border border-red-500 text-orange-500 font-mono text-xs tracking-widest hover:bg-orange-500 hover:text-white transition-all flex items-center gap-2"
+                        className="px-4 py-2 border border-red-500 text-orange-500 font-mono text-xs tracking-widest hover:bg-orange-500 hover:text-white transition-all flex items-center gap-2 hover:cursor-pointer"
                       >
                         <FaTrash />
                         DELETE

@@ -119,10 +119,10 @@ public class PostController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<PostDTO> createPost(@Valid @RequestBody PostCreatedDTO postCreatedDTO) {
+    public ResponseEntity<PostDTO> createPost(@Valid @RequestBody PostCreatedDTO postCreatedDTO,Authentication authentication) {
         logger.info("POST /api/posts - title: {}", postCreatedDTO.getTitle());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(postService.createPost(postCreatedDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).body(postService.createPost(postCreatedDTO,authentication));
     }
 
     //just for testing
@@ -137,11 +137,11 @@ public class PostController {
     @PreAuthorize("@postSecurityService.isPostOwner(#id)")
     public ResponseEntity<PostDTO>  updatePost(
             @PathVariable Long id,
-            @Valid @RequestBody PostCreatedDTO postCreatedDTO) {
+            @Valid @RequestBody PostCreatedDTO postCreatedDTO,Authentication authentication) {
 
         logger.info("PUT /api/posts/{} - title: {}", id, postCreatedDTO.getTitle());
 
-        return ResponseEntity.ok(postService.updatePost(id, postCreatedDTO));
+        return ResponseEntity.ok(postService.updatePost(id, postCreatedDTO,authentication));
     }
 
     @PatchMapping("/{id}/publish")

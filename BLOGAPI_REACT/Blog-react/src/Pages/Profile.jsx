@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FaUser,
   FaGithub,
@@ -11,9 +11,11 @@ import {
   FaUserFriends,
   FaSave,
   FaTimes,
+  FaList,
 } from "react-icons/fa";
 
 const Profile = () => {
+  const navigate = useNavigate();
   const [profileData, setProfileData] = useState(null);
   const [blogs, setBlogs] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
@@ -196,6 +198,10 @@ const Profile = () => {
     });
   };
 
+  const handleMyPosts = () => {
+    navigate(`/my-posts`);
+  };
+
   if (loading) {
     return (
       <div className="bg-white min-h-screen pt-32 flex items-center justify-center">
@@ -207,18 +213,21 @@ const Profile = () => {
   return (
     <div className="bg-white min-h-screen pt-32">
       <div className="max-w-7xl mx-auto px-12 py-12">
-        {/* Header with Edit Button */}
-        <div className="flex justify-between items-center mb-12 pb-6 border-b border-orange-500">
-          <h1 className="text-5xl font-bold font-mono tracking-tighter text-orange-500">
+        {/* Header with Edit and My Posts Buttons */}
+        <div className="flex flex-wrap justify-between items-center mb-12 pb-6 border-b border-orange-500 gap-4">
+          {/* Left: Title */}
+          <h1 className="text-3xl font-bold font-mono tracking-tighter text-orange-500 md:text-5xl">
             PROFILE
           </h1>
-          <div className="flex gap-3">
+
+          {/* Right: Buttons */}
+          <div className="flex flex-wrap items-center gap-3">
             {isEditMode ? (
               <>
                 <button
                   onClick={handleCancelEdit}
                   disabled={isSaving}
-                  className="flex items-center gap-3 px-8 py-3 border border-red-500 text-red-500 font-mono text-sm tracking-widest hover:bg-red-500 hover:text-white transition-all disabled:opacity-50"
+                  className="flex items-center gap-2 md:gap-3 px-4 md:px-8 py-2 md:py-3 border border-orange-500 text-orange-500 font-mono text-xs md:text-sm tracking-widest hover:bg-orange-500 hover:text-white transition-all disabled:opacity-50 hover:cursor-pointer"
                 >
                   <FaTimes />
                   CANCEL
@@ -226,7 +235,7 @@ const Profile = () => {
                 <button
                   onClick={handleSaveChanges}
                   disabled={isSaving}
-                  className="flex items-center gap-3 px-8 py-3 bg-orange-500 text-white font-mono text-sm tracking-widest hover:bg-orange-600 transition-all disabled:opacity-50"
+                  className="flex items-center gap-2 md:gap-3 px-4 md:px-8 py-2 md:py-3 bg-orange-500 text-white font-mono text-xs md:text-sm tracking-widest hover:bg-orange-600 transition-all disabled:opacity-50 hover:cursor-pointer"
                 >
                   <FaSave />
                   {isSaving ? "SAVING..." : "SAVE CHANGES"}
@@ -235,12 +244,21 @@ const Profile = () => {
             ) : (
               <button
                 onClick={() => setIsEditMode(true)}
-                className="flex items-center gap-3 px-8 py-3 border border-orange-500 text-orange-500 font-mono text-sm tracking-widest hover:bg-orange-500 hover:text-white transition-all"
+                className="flex items-center gap-2 md:gap-3 px-4 md:px-8 py-2 md:py-3 border border-orange-500 text-orange-500 font-mono text-xs md:text-sm tracking-widest hover:bg-orange-500 hover:text-white transition-all hover:cursor-pointer"
               >
                 <FaEdit />
                 EDIT PROFILE
               </button>
             )}
+
+            {/* My Posts Button (always visible on the right) */}
+            <button
+              onClick={handleMyPosts}
+              className="flex items-center gap-2 md:gap-3 px-4 md:px-8 py-2 md:py-3 border border-orange-500 text-orange-500 font-mono text-xs md:text-sm tracking-widest hover:bg-orange-500 hover:text-white transition-all hover:cursor-pointer"
+            >
+              <FaList />
+              MY POSTS
+            </button>
           </div>
         </div>
 
@@ -276,7 +294,10 @@ const Profile = () => {
                       onChange={handleImageUpload}
                       className="hidden"
                     />
-                    <div className="w-full py-3 border border-orange-500 text-orange-500 font-mono text-xs tracking-widest hover:bg-orange-500 hover:text-white transition-all cursor-pointer text-center">
+                    <div
+                      className="w-full py-3 border border-orange-500 text-orange-500 font-mono text-xs tracking-widest hover:bg-orange-500 hover:text-white transition-all cursor-pointer text-center hover:cursor-pointer"
+                      hover:cursor-pointer
+                    >
                       UPLOAD IMAGE
                     </div>
                   </label>
@@ -338,7 +359,7 @@ const Profile = () => {
                       href={profileData.githubLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 text-orange-500 hover:opacity-50 transition-opacity"
+                      className="flex items-center gap-3 text-orange-500 hover:opacity-50 transition-opacity hover:cursor-pointer"
                     >
                       <FaGithub className="w-5 h-5" />
                       <span className="font-mono text-sm tracking-wider">
@@ -372,7 +393,7 @@ const Profile = () => {
                       href={profileData.linkedInLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 text-orange-500 hover:opacity-50 transition-opacity"
+                      className="flex items-center gap-3 text-orange-500 hover:opacity-50 transition-opacity hover:cursor-pointer"
                     >
                       <FaLinkedin className="w-5 h-5" />
                       <span className="font-mono text-sm tracking-wider">
@@ -406,7 +427,7 @@ const Profile = () => {
                       href={profileData.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 text-orange-500 hover:opacity-50 transition-opacity"
+                      className="flex items-center gap-3 text-orange-500 hover:opacity-50 transition-opacity hover:cursor-pointer"
                     >
                       <FaGlobe className="w-5 h-5" />
                       <span className="font-mono text-sm tracking-wider">

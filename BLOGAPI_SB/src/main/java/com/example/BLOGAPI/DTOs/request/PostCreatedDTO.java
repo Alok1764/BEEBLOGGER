@@ -28,8 +28,8 @@ public class PostCreatedDTO {
     @NotBlank(message = "Content is required")
     String content;
 
-    @NotNull(message = "Author ID is required")
-    Long authorId;
+//    @NotNull(message = "Author ID is required")
+//    Long authorId;
 
     @NotEmpty(message = "At least one category ID is required")
     Set<Long> categoryIds;

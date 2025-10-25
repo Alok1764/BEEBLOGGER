@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "../Contexts/ToastContext";
+import CategorySelector, {
+  AddCategoryModal,
+} from "../components/CategorySelector";
 import {
   FaSave,
   FaEye,
@@ -15,7 +18,7 @@ import {
   FaUpload,
 } from "react-icons/fa";
 
-const BlogPostEditor = () => {
+const BlogPostEditor = ({ authorId }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
@@ -23,19 +26,16 @@ const BlogPostEditor = () => {
   const [lastSaved, setLastSaved] = useState(null);
   const [showPreview, setShowPreview] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
 
   const [postData, setPostData] = useState({
     title: "",
     content: "",
     excerpt: "",
     image: "",
-    categoryId: null,
+    categoryIds: [],
+    authorId: null,
   });
-
-  // Fetch categories on mount
-  useEffect(() => {
-    fetchCategories();
-  }, []);
 
   // Auto-save to localStorage
   useEffect(() => {
@@ -59,21 +59,6 @@ const BlogPostEditor = () => {
     return () => clearInterval(interval);
   }, [postData]);
 
-  const fetchCategories = async () => {
-    try {
-      const res = await fetch("http://localhost:8080/api/v1/categories");
-      if (res.ok) {
-        const data = await res.json();
-        setCategories(data);
-        if (data.length > 0 && !postData.categoryId) {
-          setPostData((prev) => ({ ...prev, categoryId: data[0].id }));
-        }
-      }
-    } catch (error) {
-      console.error("Error fetching categories:", error);
-    }
-  };
-
   const fetchPost = async () => {
     try {
       const tokenString = localStorage.getItem("jwtToken");
@@ -93,7 +78,9 @@ const BlogPostEditor = () => {
           content: data.content,
           excerpt: data.excerpt || "",
           image: data.image || "",
-          categoryId: data.categoryDTO?.id || categories[0]?.id,
+          categoryIds: data.categories
+            ? data.categories.map((cat) => cat.id)
+            : [],
         });
       }
     } catch (error) {
@@ -108,6 +95,21 @@ const BlogPostEditor = () => {
       JSON.stringify({ postData, savedAt: new Date().toISOString() })
     );
     setLastSaved(new Date());
+  };
+
+  // 4. Handle category changes
+  const handleCategoryChange = (selectedIds) => {
+    setPostData((prev) => ({
+      ...prev,
+      categoryIds: selectedIds,
+    }));
+  };
+  const handleCategoryAdded = (newCategory) => {
+    // Auto-select the newly created category
+    setPostData((prev) => ({
+      ...prev,
+      categoryIds: [...prev.categoryIds, newCategory.id],
+    }));
   };
 
   const handleInputChange = (e) => {
@@ -431,21 +433,13 @@ const BlogPostEditor = () => {
             {/* Category Selection */}
             <div>
               <label className="block font-mono text-xs tracking-widest text-orange-500 mb-3">
-                CATEGORY *
+                CATEGORIES *
               </label>
-              <select
-                name="categoryId"
-                value={postData.categoryId || ""}
-                onChange={handleInputChange}
-                className="w-full p-4 border-2 border-orange-500 font-mono text-sm tracking-wider text-orange-500 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-              >
-                <option value="">SELECT CATEGORY</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name.toUpperCase()}
-                  </option>
-                ))}
-              </select>
+              <CategorySelector
+                selectedCategoryIds={postData.categoryIds}
+                onChange={handleCategoryChange}
+                onAddCategory={() => setShowAddCategoryModal(true)}
+              />
             </div>
 
             {/* Featured Image */}
@@ -605,6 +599,12 @@ code block
           </div>
         )}
       </div>
+      {/* Add Category Modal */}
+      <AddCategoryModal
+        isOpen={showAddCategoryModal}
+        onClose={() => setShowAddCategoryModal(false)}
+        onCategoryAdded={handleCategoryAdded}
+      />
     </div>
   );
 };
